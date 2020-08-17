@@ -1,4 +1,10 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+group = ARTIFACT_GROUP
+version = ARTIFACT_VERSION
 
 android {
     compileSdkVersion 30
@@ -7,8 +13,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionName ARTIFACT_VERSION
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -22,8 +27,21 @@ android {
     }
 }
 
-dependencies {
-    implementation project(":java")
-    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                artifactId = "$rootProject.name-$project.name-sdk"
+                from components.release
+            }
+        }
+    }
+}
+
+dependencies {
+    api project(":java")
+    implementation 'com.amplitude:android-sdk:2.25.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 }

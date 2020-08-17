@@ -25,6 +25,7 @@ public class SkylabClientImpl implements SkylabClient {
 
     static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    static final String FALLBACK_VARIANT = "false";
     OkHttpClient httpClient;
     String apiKey;
     Storage storage;
@@ -37,11 +38,12 @@ public class SkylabClientImpl implements SkylabClient {
         }
     };
     ScheduledFuture<?> pollFuture;
+    SkylabListener skylabListener;
 
     String userId;
 
     SkylabClientImpl(String apiKey, SkylabConfig config, OkHttpClient httpClient,
-            ScheduledThreadPoolExecutor executorService, Storage storage) {
+                     ScheduledThreadPoolExecutor executorService, Storage storage) {
         if (apiKey == null) {
             LOGGER.warning("SkylabClient initialized with null apiKey.");
         }
@@ -90,6 +92,7 @@ public class SkylabClientImpl implements SkylabClient {
     /**
      * Fetches all variants and returns a future that will complete when the network call is
      * complete.
+     *
      * @return
      */
     Future<SkylabClientImpl> fetchAll() {
@@ -133,6 +136,7 @@ public class SkylabClientImpl implements SkylabClient {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 } catch (Exception e) {
                     LOGGER.severe("Exception handling response: " + responseString);
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 } finally {
                     response.close();
                 }
@@ -146,6 +150,7 @@ public class SkylabClientImpl implements SkylabClient {
 
     /**
      * Fetches the variant for the given flagKey from local storage
+     *
      * @param flagKey
      * @return
      */
@@ -154,14 +159,35 @@ public class SkylabClientImpl implements SkylabClient {
         if (this.apiKey == null) {
             return null;
         }
+        return getVariant(flagKey, FALLBACK_VARIANT);
+    }
+
+    @Override
+    public String getVariant(String flagKey, String fallback) {
+        if (this.apiKey == null) {
+            return null;
+        }
         long start = System.nanoTime();
         String variant = storage.get(flagKey);
         if (variant == null) {
-            return "false";
+            variant = fallback;
         }
         long end = System.nanoTime();
         LOGGER.info(String.format("Fetched %s in %.3f ms", flagKey, (end - start) / 1000000.0));
+        fireOnVariantReceived(userId, flagKey, variant);
         return variant;
+    }
+
+    @Override
+    public SkylabClient setListener(SkylabListener skylabListener) {
+        this.skylabListener = skylabListener;
+        return this;
+    }
+
+    private void fireOnVariantReceived(String identity, String flagKey, String variant) {
+        if (this.skylabListener != null) {
+            this.skylabListener.onVariantReceived(identity, flagKey, variant);
+        }
     }
 
 }

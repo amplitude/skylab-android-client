@@ -13,6 +13,8 @@ buildscript {
 }
 
 allprojects {
+    apply plugin: 'maven-publish'
+
     repositories {
         google()
         jcenter()
@@ -25,6 +27,27 @@ allprojects {
                     password project.findProperty('codeartifact.token') ?: System.getenv('CODEARTIFACT_TOKEN')
                 }
             }
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = 'AWSCodeArtifact'
+                url 'https://amplitude-358203115967.d.codeartifact.us-west-2.amazonaws.com/maven/amplitude-maven-private/'
+                credentials {
+                    username "aws"
+                    password System.getenv('CODEARTIFACT_TOKEN') ?: project.findProperty('codeartifact.token')
+                }
+            }
+//            maven {
+//                name = 'GitHubPackages'
+//                url = uri('https://maven.pkg.github.com/amplitude/skylab-java-sdk')
+//                credentials {
+//                    username = System.getenv('GITHUB_USER') ?: project.findProperty('github.user')
+//                    password = System.getenv('GITHUB_TOKEN') ?: project.findProperty('github.token')
+//                }
+//            }
         }
     }
 }

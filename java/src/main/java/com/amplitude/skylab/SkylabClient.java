@@ -16,9 +16,21 @@ public interface SkylabClient {
 
     /**
      * Fetches the variant for the given flagKey from local storage
+     *
      * @param flagKey
      * @return
      */
     String getVariant(String flagKey);
+
+    /**
+     * Fetches the variant for the given flagKey from local storage.
+     * If the variant has not been fetched before, returns fallback.
+     *
+     * @param flagKey
+     * @return
+     */
+    String getVariant(String flagKey, String fallback);
+
+    SkylabClient setListener(SkylabListener skylabListener);
 
 }
