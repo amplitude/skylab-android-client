@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         SkylabClient client = Skylab.get("main");
         client.startPolling();
-        if (client.getVariant("notifications").equals("true")) {
+        if (client.getVariant("new-notifications").equals("true")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
         } else {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(false);

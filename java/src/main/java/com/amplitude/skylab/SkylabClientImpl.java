@@ -101,9 +101,9 @@ public class SkylabClientImpl implements SkylabClient {
             future.complete(this);
             return future;
         }
-        long start = System.nanoTime();
-        HttpUrl url = serverUrl.newBuilder().addPathSegments("api/variants").build();
-        JSONObject context = new JSONObject();
+        final long start = System.nanoTime();
+        final HttpUrl url = serverUrl.newBuilder().addPathSegments("api/variants").build();
+        final JSONObject context = new JSONObject();
         context.put("id", userId);
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + context.toString());
         Request request = new Request.Builder().url(url).addHeader("Api-Key", this.apiKey)
@@ -122,6 +122,7 @@ public class SkylabClientImpl implements SkylabClient {
 
                 try {
                     if (response.isSuccessful()) {
+                        storage.clear();
                         JSONArray result = new JSONArray(responseString);
                         for (int i = 0; i < result.length(); i++) {
                             JSONObject flag = result.getJSONObject(i);
@@ -141,10 +142,11 @@ public class SkylabClientImpl implements SkylabClient {
                     response.close();
                 }
                 future.complete(SkylabClientImpl.this);
+                long end = System.nanoTime();
+                LOGGER.info(String.format("Fetched from %s for context %s in %.3f ms",
+                        url.toString(), context.toString(), (end - start) / 1000000.0));
             }
         });
-        long end = System.nanoTime();
-        LOGGER.info(String.format("Fetched all in %.3f ms", (end - start) / 1000000.0));
         return future;
     }
 
