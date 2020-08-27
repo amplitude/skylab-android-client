@@ -17,7 +17,7 @@ public class SkylabConfig {
     }
 
     public static class Builder {
-        private String serverUrl = "https://skylab.staging.amplitude.com/";
+        private String serverUrl = "https://api.skylab.staging.amplitude.com/";
 
         public Builder setServerUrl(String serverUrl) {
             this.serverUrl = serverUrl;
