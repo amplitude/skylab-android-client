@@ -102,7 +102,7 @@ public class SkylabClientImpl implements SkylabClient {
             return future;
         }
         final long start = System.nanoTime();
-        final HttpUrl url = serverUrl.newBuilder().addPathSegments("api/variants").build();
+        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants").build();
         final JSONObject context = new JSONObject();
         context.put("id", userId);
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + context.toString());
