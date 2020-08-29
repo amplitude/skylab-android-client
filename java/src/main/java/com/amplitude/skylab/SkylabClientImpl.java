@@ -123,10 +123,9 @@ public class SkylabClientImpl implements SkylabClient {
                 try {
                     if (response.isSuccessful()) {
                         storage.clear();
-                        JSONArray result = new JSONArray(responseString);
-                        for (int i = 0; i < result.length(); i++) {
-                            JSONObject flag = result.getJSONObject(i);
-                            storage.put(flag.getString("key"), flag.getString("value"));
+                        JSONObject result = new JSONObject(responseString);
+                        for (String flag : result.keySet()) {
+                            storage.put(flag, result.getString(flag));
                         }
                         LOGGER.info("Fetched all: " + result.toString());
                     } else {

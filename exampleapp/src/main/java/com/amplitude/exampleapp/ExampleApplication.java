@@ -16,7 +16,7 @@ public class ExampleApplication extends Application {
         // add the following
         String clientName = "main";
         String apiKey = "sdk-DYRDKIFIsoJdA3cCDM2VMfq0YwIZpq4J";
-        SkylabConfig config = SkylabConfig.builder().setServerUrl("https://skylab.staging.amplitude.com").build();
+        SkylabConfig config = SkylabConfig.builder().setServerUrl("https://skylab-api.staging.amplitude.com").build();
         SkylabClient client = Skylab.init(clientName, apiKey, config);
         AmplitudeClient amplitude = Amplitude.getInstance();
         amplitude.initialize(this, "a6dd847b9d2f03c816d4f3f8458cdc1d");
