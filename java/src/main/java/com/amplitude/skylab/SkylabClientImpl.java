@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +27,10 @@ public class SkylabClientImpl implements SkylabClient {
     static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     static final String FALLBACK_VARIANT = "false";
+    static final Object STORAGE_LOCK = new Object();
     OkHttpClient httpClient;
     String apiKey;
+    SkylabConfig config;
     Storage storage;
     HttpUrl serverUrl;
     ScheduledThreadPoolExecutor executorService;
@@ -39,53 +42,73 @@ public class SkylabClientImpl implements SkylabClient {
     };
     ScheduledFuture<?> pollFuture;
     SkylabListener skylabListener;
+    SkylabContext context;
 
     String userId;
 
     SkylabClientImpl(String apiKey, SkylabConfig config, OkHttpClient httpClient,
                      ScheduledThreadPoolExecutor executorService, Storage storage) {
-        if (apiKey == null) {
-            LOGGER.warning("SkylabClient initialized with null apiKey.");
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            // guarantee that apiKey exists
+            throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
+                    "apiKey.");
         }
         this.apiKey = apiKey;
         this.httpClient = httpClient;
         this.executorService = executorService;
         this.storage = storage;
+        this.config = config;
+        this.pollFuture = null;
+        this.context = null;
         serverUrl = HttpUrl.parse(config.getServerUrl());
     }
 
     @Override
-    public Future<SkylabClientImpl> init() {
+    public Future<SkylabClient> start(SkylabContext context) {
+        this.context = context;
         return fetchAll();
     }
 
     @Override
-    public void init(long timeoutMs) {
+    public void start(SkylabContext context, long timeoutMs) {
         try {
-            Future<SkylabClientImpl> future = init();
+            Future<SkylabClient> future = start(context);
             future.get(timeoutMs, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            LOGGER.log(Level.INFO, "Timeout while initializing client, evaluations may not be ready");
         } catch (Exception e) {
-            LOGGER.warning("Exception in client initialization");
+            LOGGER.log(Level.WARNING, "Exception in client initialization", e);
         }
     }
 
     @Override
-    public SkylabClient identify(String userId) {
-        this.userId = userId;
-        storage.clear();
-        return this;
+    public Future<SkylabClient> setContext(SkylabContext context) {
+        final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
+        if ((this.context == null && context == null) || (this.context != null && this.context.equals(context))) {
+            future.complete(this);
+            return future;
+        } else {
+            this.context = context;
+            storage.clear();
+            return this.start(context);
+        }
     }
 
     @Override
     public SkylabClient startPolling() {
-        pollFuture = executorService.scheduleAtFixedRate(pollTask, 10, 10, TimeUnit.SECONDS);
+        if (pollFuture == null) {
+            pollFuture = executorService.scheduleAtFixedRate(pollTask,
+                    config.getPollIntervalSecs(), config.getPollIntervalSecs(), TimeUnit.SECONDS);
+        }
         return this;
     }
 
     @Override
     public SkylabClient stopPolling() {
-        pollFuture.cancel(false);
-        executorService.remove(pollTask);
+        if (pollFuture != null) {
+            pollFuture.cancel(false);
+            executorService.purge();
+        }
         return this;
     }
 
@@ -95,19 +118,15 @@ public class SkylabClientImpl implements SkylabClient {
      *
      * @return
      */
-    Future<SkylabClientImpl> fetchAll() {
-        final AsyncFuture<SkylabClientImpl> future = new AsyncFuture<>();
-        if (this.apiKey == null) {
-            future.complete(this);
-            return future;
-        }
+    Future<SkylabClient> fetchAll() {
+        final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
         final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants").build();
-        final JSONObject context = new JSONObject();
-        context.put("id", userId);
-        LOGGER.info("Requesting variants from " + url.toString() + " for context " + context.toString());
+        final JSONObject jsonContext = (context != null) ? context.toJSONObject() :
+                new JSONObject();
+        LOGGER.info("Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
         Request request = new Request.Builder().url(url).addHeader("Api-Key", this.apiKey)
-                .post(RequestBody.create(context.toString(), JSON)).build();
+                .post(RequestBody.create(jsonContext.toString(), JSON)).build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -122,12 +141,13 @@ public class SkylabClientImpl implements SkylabClient {
 
                 try {
                     if (response.isSuccessful()) {
-                        storage.clear();
-                        JSONObject result = new JSONObject(responseString);
-                        for (String flag : result.keySet()) {
-                            storage.put(flag, result.getString(flag));
+                        synchronized (STORAGE_LOCK) {
+                            storage.clear();
+                            JSONObject result = new JSONObject(responseString);
+                            for (String flag : result.keySet()) {
+                                storage.put(flag, result.getString(flag));
+                            }
                         }
-                        LOGGER.info("Fetched all: " + result.toString());
                     } else {
                         LOGGER.warning(responseString);
                     }
@@ -142,8 +162,8 @@ public class SkylabClientImpl implements SkylabClient {
                 }
                 future.complete(SkylabClientImpl.this);
                 long end = System.nanoTime();
-                LOGGER.info(String.format("Fetched from %s for context %s in %.3f ms",
-                        url.toString(), context.toString(), (end - start) / 1000000.0));
+                LOGGER.info(String.format("Fetched all: %s for context %s in %.3f ms",
+                        responseString, jsonContext.toString(), (end - start) / 1000000.0));
             }
         });
         return future;
@@ -157,19 +177,16 @@ public class SkylabClientImpl implements SkylabClient {
      */
     @Override
     public String getVariant(String flagKey) {
-        if (this.apiKey == null) {
-            return null;
-        }
         return getVariant(flagKey, FALLBACK_VARIANT);
     }
 
     @Override
     public String getVariant(String flagKey, String fallback) {
-        if (this.apiKey == null) {
-            return null;
-        }
         long start = System.nanoTime();
-        String variant = storage.get(flagKey);
+        String variant;
+        synchronized (STORAGE_LOCK) {
+            variant = storage.get(flagKey);
+        }
         if (variant == null) {
             variant = fallback;
         }
