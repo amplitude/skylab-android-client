@@ -1,6 +1,8 @@
 package com.amplitude.skylab;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -46,8 +48,8 @@ public class SkylabClientImpl implements SkylabClient {
 
     String userId;
 
-    SkylabClientImpl(String apiKey, SkylabConfig config, OkHttpClient httpClient,
-                     ScheduledThreadPoolExecutor executorService, Storage storage) {
+    SkylabClientImpl(String apiKey, SkylabConfig config, Storage storage, OkHttpClient httpClient,
+                     ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             // guarantee that apiKey exists
             throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
@@ -144,9 +146,15 @@ public class SkylabClientImpl implements SkylabClient {
                         synchronized (STORAGE_LOCK) {
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
+                            Map<String, String> changed = new HashMap<>();
                             for (String flag : result.keySet()) {
-                                storage.put(flag, result.getString(flag));
+                                String newValue = result.getString(flag);
+                                String oldValue = storage.put(flag, newValue);
+                                if (!newValue.equals(oldValue)) {
+                                    changed.put(flag, newValue);
+                                };
                             }
+                            fireOnVariantReceived(context, changed);
                         }
                     } else {
                         LOGGER.warning(responseString);
@@ -192,7 +200,6 @@ public class SkylabClientImpl implements SkylabClient {
         }
         long end = System.nanoTime();
         LOGGER.info(String.format("Fetched %s in %.3f ms", flagKey, (end - start) / 1000000.0));
-        fireOnVariantReceived(userId, flagKey, variant);
         return variant;
     }
 
@@ -202,9 +209,9 @@ public class SkylabClientImpl implements SkylabClient {
         return this;
     }
 
-    private void fireOnVariantReceived(String identity, String flagKey, String variant) {
+    private void fireOnVariantReceived(SkylabContext context, Map<String, String> variants) {
         if (this.skylabListener != null) {
-            this.skylabListener.onVariantReceived(identity, flagKey, variant);
+            this.skylabListener.onVariantsChanged(context, variants);
         }
     }
 
