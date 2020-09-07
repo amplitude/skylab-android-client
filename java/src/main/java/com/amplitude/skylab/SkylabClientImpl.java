@@ -1,6 +1,9 @@
 package com.amplitude.skylab;
 
+import com.amplitude.util.Base64;
+
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -18,7 +21,6 @@ import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SkylabClientImpl implements SkylabClient {
@@ -102,12 +104,16 @@ public class SkylabClientImpl implements SkylabClient {
             return future;
         }
         final long start = System.nanoTime();
-        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants").build();
         final JSONObject context = new JSONObject();
         context.put("id", userId);
+        String jsonString = context.toString();
+
+        byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
+        String base64Encoded = new String(Base64.getEncoder().encode(srcData));
+        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + context.toString());
-        Request request = new Request.Builder().url(url).addHeader("Api-Key", this.apiKey)
-                .post(RequestBody.create(context.toString(), JSON)).build();
+        Request request = new Request.Builder().url(url).addHeader("Authorization", "Api-Key " + this.apiKey)
+                .get().build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -119,16 +125,17 @@ public class SkylabClientImpl implements SkylabClient {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseString = response.body().string();
-
                 try {
                     if (response.isSuccessful()) {
                         storage.clear();
-                        JSONArray result = new JSONArray(responseString);
-                        for (int i = 0; i < result.length(); i++) {
-                            JSONObject flag = result.getJSONObject(i);
-                            storage.put(flag.getString("key"), flag.getString("value"));
+                        JSONObject jsonObj = new JSONObject(responseString);
+                        JSONArray keys = jsonObj.names();
+                        for (int i=0; i<keys.length(); i++) {
+                            String key = keys.getString(i);
+                            String value = jsonObj.getString(key);
+                            storage.put(key, value);
                         }
-                        LOGGER.info("Fetched all: " + result.toString());
+                        LOGGER.info("Fetched all: " + jsonObj.toString());
                     } else {
                         LOGGER.warning(responseString);
                     }

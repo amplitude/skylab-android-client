@@ -36,10 +36,10 @@ public class Skylab {
 
     public static void main(String[] args) {
         // SkylabClient client = new SkylabClient("sdk-lO4W8l0kY4Cn1FkN966Mu51e1x94Qmk3");
-        SkylabConfig config = SkylabConfig.builder().setServerUrl("http://localhost:3033/").build();
-        SkylabClient client = Skylab.init("default", "sdk-xE8RLkvVTbYrG3VW56t7yyrrK2cUzYdN", config);
-        client.identify("skylab");
-        client.init(200);
+        SkylabConfig config = SkylabConfig.builder().setServerUrl("https://skylab-api.staging.amplitude.com/").build();
+        SkylabClient client = Skylab.init("default", "sdk-HsmGr5Llyy321hN0ZXIDVU2dDJmlhqfz", config);
+        client.identify("load-tester@skylab");
+        client.init(5000);
 
         LOGGER.info(client.getVariant("button-color"));
         Skylab.shutdown();
