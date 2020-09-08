@@ -67,9 +67,18 @@ public class SkylabFactory {
         LOGGER.info("Test User: " + client.getVariant("new-notifications"));
 
         future = client.setContext(new SkylabContext().setUserId("new-user"));
-
         future.get();
         LOGGER.info("New User: " + client.getVariant("new-notifications"));
+
+        config = SkylabConfig.builder().setServerUrl("https://skylab-api.staging.amplitude.com/").build();
+        client = SkylabFactory.init("default", "sdk-HsmGr5Llyy321hN0ZXIDVU2dDJmlhqfz", config);
+        future = client.start(new SkylabContext().setUserId("load-tester@skylab"));
+        future.get();
+        client.startPolling();
+
+        LOGGER.info(client.getVariant("button-color"));
+        LOGGER.info("Test User: " + client.getVariant("load-tester-feature"));
         SkylabFactory.shutdown();
+
     }
 }

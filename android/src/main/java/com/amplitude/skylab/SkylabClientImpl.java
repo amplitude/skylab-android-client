@@ -1,7 +1,11 @@
 package com.amplitude.skylab;
 
+import android.util.Base64;
+
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -11,7 +15,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,11 +24,10 @@ import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SkylabClientImpl implements SkylabClient {
-
+    private static final int BASE_64_DEFAULT_FLAGS = Base64.NO_WRAP | Base64.URL_SAFE;
     static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     static final String FALLBACK_VARIANT = "false";
@@ -123,12 +125,15 @@ public class SkylabClientImpl implements SkylabClient {
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
-        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants").build();
         final JSONObject jsonContext = (context != null) ? context.toJSONObject() :
                 new JSONObject();
+        final String jsonString = jsonContext.toString();
+        final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
+        final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
+        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
-        Request request = new Request.Builder().url(url).addHeader("Api-Key", this.apiKey)
-                .post(RequestBody.create(jsonContext.toString(), JSON)).build();
+        Request request = new Request.Builder().url(url).addHeader("Authorization", "Api-Key " + this.apiKey)
+                .get().build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -140,14 +145,16 @@ public class SkylabClientImpl implements SkylabClient {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseString = response.body().string();
-
                 try {
                     if (response.isSuccessful()) {
                         synchronized (STORAGE_LOCK) {
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
                             Map<String, String> changed = new HashMap<>();
-                            for (String flag : result.keySet()) {
+
+                            Iterator<String> flags = result.keys();
+                            while (flags.hasNext()) {
+                                String flag = flags.next();
                                 String newValue = result.getString(flag);
                                 String oldValue = storage.put(flag, newValue);
                                 if (!newValue.equals(oldValue)) {
