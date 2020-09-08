@@ -128,7 +128,7 @@ public class SkylabClientImpl implements SkylabClient {
                 new JSONObject();
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
-        final String base64Encoded = new String(Base64.getUrlEncoder().encode(srcData));
+        final String base64Encoded = Base64.encodeToString(srcData);
         final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
         Request request = new Request.Builder().url(url).addHeader("Authorization", "Api-Key " + this.apiKey)
