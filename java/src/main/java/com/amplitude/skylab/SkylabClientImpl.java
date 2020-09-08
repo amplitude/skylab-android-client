@@ -128,7 +128,7 @@ public class SkylabClientImpl implements SkylabClient {
                 new JSONObject();
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
-        final String base64Encoded = new String(Base64.getEncoder().encode(srcData));
+        final String base64Encoded = new String(Base64.getUrlEncoder().encode(srcData));
         final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
         LOGGER.info("Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
         Request request = new Request.Builder().url(url).addHeader("Authorization", "Api-Key " + this.apiKey)
@@ -146,7 +146,7 @@ public class SkylabClientImpl implements SkylabClient {
                 String responseString = response.body().string();
                 try {
                     if (response.isSuccessful()) {
-                       synchronized (STORAGE_LOCK) {
+                        synchronized (STORAGE_LOCK) {
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
                             Map<String, String> changed = new HashMap<>();
