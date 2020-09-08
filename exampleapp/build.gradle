@@ -42,6 +42,8 @@ dependencies {
     implementation 'com.amplitude:android-sdk:2.25.2'
     implementation('com.amplitude:skylab-android-sdk:0.1.4-SNAPSHOT') {changing = true}
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    implementation project(path: ':android')
+    implementation project(path: ':android')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
