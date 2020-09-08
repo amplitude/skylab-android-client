@@ -1,4 +1,3 @@
 include ':exampleapp'
-include ':java'
 include ':android'
 rootProject.name = "skylab"

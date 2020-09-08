@@ -41,7 +41,6 @@ afterEvaluate {
 }
 
 dependencies {
-    api project(":java")
     implementation 'com.amplitude:android-sdk:2.25.2'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 }
