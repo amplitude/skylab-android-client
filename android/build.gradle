@@ -38,6 +38,10 @@ afterEvaluate {
             }
         }
     }
+
+    artifactoryPublish {
+        publications(publishing.publications.release)
+    }
 }
 
 dependencies {
