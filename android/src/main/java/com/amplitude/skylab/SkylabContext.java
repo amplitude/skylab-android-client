@@ -4,7 +4,6 @@ package com.amplitude.skylab;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,12 +11,14 @@ public class SkylabContext {
 
     static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
 
-    String id;
+    public static final String USER_ID_KEY = "user_id";
+
+    String userId;
 
     public SkylabContext() { }
 
     public SkylabContext setUserId(String userId) {
-        this.id = userId;
+        this.userId = userId;
         return this;
     }
 
@@ -36,13 +37,13 @@ public class SkylabContext {
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return userId.hashCode();
     }
 
     public JSONObject toJSONObject() {
         JSONObject object = new JSONObject();
         try {
-            object.put("id", id);
+            object.put(USER_ID_KEY, userId);
         } catch (JSONException e) {
             LOGGER.log(Level.WARNING, "Error converting SkylabContext to JSONObject", e);
         }

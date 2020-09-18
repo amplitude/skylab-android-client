@@ -24,7 +24,7 @@ public class AmplitudeSkylabListener implements SkylabListener {
     public void onVariantsChanged(SkylabContext context, Map<String, String> variants) {
         Identify identify = new Identify();
         for (Map.Entry<String, String> entry : variants.entrySet()) {
-            identify.set("[Skylab] " + entry.getKey(), entry.getValue());
+            identify.set("[Amplitude] [Flag] " + entry.getKey(), entry.getValue());
         }
         amplitude.identify(identify);
     }
