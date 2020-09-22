@@ -40,7 +40,8 @@ public class AsyncFuture<T> implements Future<T> {
     }
 
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
+            TimeoutException {
         long nanosRemaining = unit.toNanos(timeout);
         long end = System.nanoTime() + nanosRemaining;
         synchronized (lock) {

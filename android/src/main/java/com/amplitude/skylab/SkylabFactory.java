@@ -16,7 +16,6 @@ import okhttp3.OkHttpClient;
  */
 public class SkylabFactory {
 
-    static final Logger LOGGER = Logger.getLogger(SkylabFactory.class.getName());
     static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
         public Thread newThread(Runnable r) {
             Thread t = Executors.defaultThreadFactory().newThread(r);
@@ -55,30 +54,5 @@ public class SkylabFactory {
 
     public static void shutdown() {
         HTTP_CLIENT.dispatcher().executorService().shutdown();
-    }
-
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-        SkylabConfig config = SkylabConfig.builder().setPollIntervalSecs(10).build();
-        SkylabClient client = SkylabFactory.init("default", "sdk-DYRDKIFIsoJdA3cCDM2VMfq0YwIZpq4J",
-                config);
-        Future<SkylabClient> future = client.start(new SkylabContext().setUserId("test-user"));
-        future.get();
-        client.startPolling();
-        LOGGER.info("Test User: " + client.getVariant("new-notifications"));
-
-        future = client.setContext(new SkylabContext().setUserId("new-user"));
-        future.get();
-        LOGGER.info("New User: " + client.getVariant("new-notifications"));
-
-        config = SkylabConfig.builder().setServerUrl("https://skylab-api.staging.amplitude.com/").build();
-        client = SkylabFactory.init("default", "sdk-HsmGr5Llyy321hN0ZXIDVU2dDJmlhqfz", config);
-        future = client.start(new SkylabContext().setUserId("load-tester@skylab"));
-        future.get();
-        client.startPolling();
-
-        LOGGER.info(client.getVariant("button-color"));
-        LOGGER.info("Test User: " + client.getVariant("load-tester-feature"));
-        SkylabFactory.shutdown();
-
     }
 }

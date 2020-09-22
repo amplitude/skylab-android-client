@@ -1,6 +1,10 @@
 package com.amplitude.skylab;
 
 
+import android.util.Log;
+
+import com.amplitude.api.AmplitudeClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,21 +13,28 @@ import java.util.logging.Logger;
 
 public class SkylabContext {
 
-    static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
-
     public static final String USER_ID_KEY = "user_id";
+    public static final String DEVICE_ID_KEY = "device_id";
 
     String userId;
+    String deviceId;
 
-    public SkylabContext() { }
+    public SkylabContext() {
+    }
 
     public SkylabContext setUserId(String userId) {
         this.userId = userId;
         return this;
     }
 
+    public SkylabContext setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+        return this;
+    }
+
     /**
      * Two contexts are equal if the JSON representations of the contexts are equal
+     *
      * @param o
      * @return
      */
@@ -44,10 +55,15 @@ public class SkylabContext {
         JSONObject object = new JSONObject();
         try {
             object.put(USER_ID_KEY, userId);
+            object.put(DEVICE_ID_KEY, deviceId);
         } catch (JSONException e) {
-            LOGGER.log(Level.WARNING, "Error converting SkylabContext to JSONObject", e);
+            Log.w(Skylab.TAG, "Error converting SkylabContext to JSONObject", e);
         }
         return object;
+    }
+
+    public interface Provider {
+        public SkylabContext get();
     }
 
 }

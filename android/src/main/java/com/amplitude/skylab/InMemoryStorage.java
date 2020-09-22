@@ -1,5 +1,6 @@
 package com.amplitude.skylab;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,6 +22,11 @@ public class InMemoryStorage implements Storage {
             return data.get(key);
         }
         return null;
+    }
+
+    @Override
+    public Map<String, String> getAll() {
+        return new HashMap<>(data);
     }
 
     @Override

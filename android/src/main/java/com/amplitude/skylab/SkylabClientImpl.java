@@ -1,36 +1,32 @@
 package com.amplitude.skylab;
 
 import android.util.Base64;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class SkylabClientImpl implements SkylabClient {
     private static final int BASE_64_DEFAULT_FLAGS = Base64.NO_WRAP | Base64.URL_SAFE;
-    static final Logger LOGGER = Logger.getLogger(SkylabClientImpl.class.getName());
-    static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    static final String FALLBACK_VARIANT = "false";
     static final Object STORAGE_LOCK = new Object();
     OkHttpClient httpClient;
     String apiKey;
@@ -74,14 +70,28 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     @Override
+    public Future<SkylabClient> start(final SkylabContext.Provider provider) {
+        Callable<SkylabClient> callable = new Callable<SkylabClient>() {
+
+            @Override
+            public SkylabClient call() throws Exception {
+                SkylabClientImpl.this.context = provider.get();
+                return fetchAll().get();
+            }
+        };
+        return executorService.submit(callable);
+    }
+
+    @Override
     public void start(SkylabContext context, long timeoutMs) {
         try {
             Future<SkylabClient> future = start(context);
             future.get(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            LOGGER.log(Level.INFO, "Timeout while initializing client, evaluations may not be ready");
+            Log.i(Skylab.TAG, "Timeout while initializing client, evaluations may not be " +
+                    "ready");
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Exception in client initialization", e);
+            Log.w(Skylab.TAG, "Exception in client initialization", e);
         }
     }
 
@@ -130,15 +140,17 @@ public class SkylabClientImpl implements SkylabClient {
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
         final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
-        final HttpUrl url = serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
-        LOGGER.info("Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
-        Request request = new Request.Builder().url(url).addHeader("Authorization", "Api-Key " + this.apiKey)
+        final HttpUrl url =
+                serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
+        Log.d(Skylab.TAG, "Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
+        Request request = new Request.Builder().url(url).addHeader("Authorization",
+                "Api-Key " + this.apiKey)
                 .get().build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                Log.e(Skylab.TAG, e.getMessage(), e);
                 future.completeExceptionally(e);
             }
 
@@ -148,36 +160,45 @@ public class SkylabClientImpl implements SkylabClient {
                 try {
                     if (response.isSuccessful()) {
                         synchronized (STORAGE_LOCK) {
+                            Map<String, String> oldValues = storage.getAll();
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
                             Map<String, String> changed = new HashMap<>();
+
+                            // add any flags that disappeared
+                            for (String flag : oldValues.keySet()) {
+                                if (!result.has(flag) && !Skylab.DEFAULT_VARIANT.equals(oldValues.get(flag))) {
+                                    changed.put(flag, Skylab.DEFAULT_VARIANT);
+                                }
+                            }
 
                             Iterator<String> flags = result.keys();
                             while (flags.hasNext()) {
                                 String flag = flags.next();
                                 String newValue = result.getString(flag);
-                                String oldValue = storage.put(flag, newValue);
+                                storage.put(flag, newValue);
+                                String oldValue = oldValues.get(flag);
                                 if (!newValue.equals(oldValue)) {
                                     changed.put(flag, newValue);
-                                };
+                                }
                             }
                             fireOnVariantReceived(context, changed);
                         }
                     } else {
-                        LOGGER.warning(responseString);
+                        Log.w(Skylab.TAG,responseString);
                     }
                 } catch (JSONException e) {
-                    LOGGER.severe("Could not parse JSON: " + responseString);
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    Log.e(Skylab.TAG, "Could not parse JSON: " + responseString);
+                    Log.e(Skylab.TAG, e.getMessage(), e);
                 } catch (Exception e) {
-                    LOGGER.severe("Exception handling response: " + responseString);
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    Log.e(Skylab.TAG,"Exception handling response: " + responseString);
+                    Log.e(Skylab.TAG, e.getMessage(), e);
                 } finally {
                     response.close();
                 }
                 future.complete(SkylabClientImpl.this);
                 long end = System.nanoTime();
-                LOGGER.info(String.format("Fetched all: %s for context %s in %.3f ms",
+                Log.d(Skylab.TAG, String.format("Fetched all: %s for context %s in %.3f ms",
                         responseString, jsonContext.toString(), (end - start) / 1000000.0));
             }
         });
@@ -185,16 +206,24 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     /**
-     * Fetches the variant for the given flagKey from local storage
+     * Fetches the variant for the given flagKey from local storage. If no such flag
+     * is found, returns Skylab.DEFAULT_VARIANT ("false").
      *
      * @param flagKey
      * @return
      */
     @Override
     public String getVariant(String flagKey) {
-        return getVariant(flagKey, FALLBACK_VARIANT);
+        return getVariant(flagKey, Skylab.DEFAULT_VARIANT);
     }
 
+    /**
+     * Fetches the variant for the given flagKey from local storage. If no such flag
+     * is found, returns fallback.
+     *
+     * @param flagKey
+     * @return
+     */
     @Override
     public String getVariant(String flagKey, String fallback) {
         long start = System.nanoTime();
@@ -206,7 +235,7 @@ public class SkylabClientImpl implements SkylabClient {
             variant = fallback;
         }
         long end = System.nanoTime();
-        LOGGER.info(String.format("Fetched %s in %.3f ms", flagKey, (end - start) / 1000000.0));
+        Log.d(Skylab.TAG, String.format("Fetched %s in %.3f ms", flagKey, (end - start) / 1000000.0));
         return variant;
     }
 
