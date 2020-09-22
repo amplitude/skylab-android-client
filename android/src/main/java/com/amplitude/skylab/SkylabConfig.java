@@ -2,7 +2,7 @@ package com.amplitude.skylab;
 
 public class SkylabConfig {
 
-    private static final String DEFAULT_SERVER_URL = "https://skylab-api.staging.amplitude.com/";
+    private static final String DEFAULT_SERVER_URL = "https://api.lab.amplitude.com/";
     private static final int DEFAULT_POLL_INTERVAL_SECS = 60;
 
     private String serverUrl;
