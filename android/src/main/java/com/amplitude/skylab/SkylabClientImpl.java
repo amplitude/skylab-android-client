@@ -111,6 +111,7 @@ public class SkylabClientImpl implements SkylabClient {
     @Override
     public SkylabClient startPolling() {
         if (pollFuture == null) {
+            Log.d(Skylab.TAG, "Starting polling every " + config.getPollIntervalSecs() + " seconds");
             pollFuture = executorService.scheduleAtFixedRate(pollTask,
                     config.getPollIntervalSecs(), config.getPollIntervalSecs(), TimeUnit.SECONDS);
         }
@@ -120,8 +121,10 @@ public class SkylabClientImpl implements SkylabClient {
     @Override
     public SkylabClient stopPolling() {
         if (pollFuture != null) {
+            Log.d(Skylab.TAG, "Stopping polling");
             pollFuture.cancel(false);
             executorService.purge();
+            this.pollFuture = null;
         }
         return this;
     }
