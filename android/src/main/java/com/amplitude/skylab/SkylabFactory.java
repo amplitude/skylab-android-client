@@ -1,5 +1,8 @@
 package com.amplitude.skylab;
 
+import android.app.Application;
+import android.content.Context;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -23,26 +26,31 @@ public class SkylabFactory {
             return t;
         }
     };
-    static final ScheduledThreadPoolExecutor EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(0, DAEMON_THREAD_FACTORY);
+    static final ScheduledThreadPoolExecutor EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(0
+            , DAEMON_THREAD_FACTORY);
     static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     static final Map<String, SkylabClientImpl> INSTANCES = new ConcurrentHashMap<String,
             SkylabClientImpl>();
 
-    static synchronized SkylabClient init(String name, String apiKey, SkylabConfig config) {
-        return init(name, apiKey, config, new InMemoryStorage());
+    static synchronized SkylabClient init(String name, Application application, String apiKey,
+                                          SkylabConfig config) {
+        return init(name, application, apiKey, config, new InMemoryStorage());
     }
 
     /**
      * Callers can use this init method to configure storage
+     *
      * @param name
      * @param apiKey
      * @param config
      * @param storage
      * @return
      */
-    static synchronized SkylabClient init(String name, String apiKey, SkylabConfig config, Storage storage) {
+    static synchronized SkylabClient init(String name, Application application, String apiKey,
+                                          SkylabConfig config, Storage storage) {
         if (!INSTANCES.containsKey(name)) {
-            SkylabClientImpl client = new SkylabClientImpl(apiKey, config, storage, HTTP_CLIENT, EXECUTOR_SERVICE);
+            SkylabClientImpl client = new SkylabClientImpl(application, apiKey, config,
+                    storage, HTTP_CLIENT, EXECUTOR_SERVICE);
             INSTANCES.put(name, client);
         }
         return INSTANCES.get(name);
