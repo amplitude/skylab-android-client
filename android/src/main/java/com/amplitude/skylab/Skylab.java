@@ -74,8 +74,8 @@ public class Skylab {
         String normalizedName = Utils.normalizeInstanceName(name);
         SkylabClientImpl client = INSTANCES.get(normalizedName);
         if (client == null) {
-            client = new SkylabClientImpl(application, apiKey, config,
-                    new SharedPrefsStorage(application, apiKey), HTTP_CLIENT, EXECUTOR_SERVICE);
+            client = new SkylabClientImpl(normalizedName, application, apiKey, config,
+                    new SharedPrefsStorage(application, normalizedName), HTTP_CLIENT, EXECUTOR_SERVICE);
             INSTANCES.put(normalizedName, client);
         }
         return client;

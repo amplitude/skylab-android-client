@@ -2,6 +2,7 @@ package com.amplitude.skylab;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,13 @@ public class SharedPrefsStorage implements Storage {
     String sharedPrefsKey;
     SharedPreferences sharedPrefs;
 
-    public SharedPrefsStorage(Context appContext, String apiKey) {
+    public SharedPrefsStorage(Context appContext, String instanceName) {
         this.appContext = appContext;
-        this.sharedPrefsKey = "amplitude." + apiKey + ".flags";
+        if (TextUtils.isEmpty(instanceName) || Skylab.DEFAULT_INSTANCE.equals(instanceName)) {
+            this.sharedPrefsKey = SkylabConfig.SHARED_PREFS_STORAGE_NAME;
+        } else {
+            this.sharedPrefsKey = SkylabConfig.SHARED_PREFS_STORAGE_NAME + "-" + instanceName;
+        }
         sharedPrefs = appContext.getSharedPreferences(sharedPrefsKey, Context.MODE_PRIVATE);
     }
 

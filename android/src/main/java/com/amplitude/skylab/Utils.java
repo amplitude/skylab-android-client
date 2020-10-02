@@ -1,13 +1,11 @@
 package com.amplitude.skylab;
 
+import android.text.TextUtils;
+
 public class Utils {
 
-    public static boolean isEmptyString(String s) {
-        return (s == null || s.length() == 0);
-    }
-
     static String normalizeInstanceName(String instance) {
-        if (isEmptyString(instance)) {
+        if (TextUtils.isEmpty(instance)) {
             instance = Skylab.DEFAULT_INSTANCE;
         }
         return instance.toLowerCase();

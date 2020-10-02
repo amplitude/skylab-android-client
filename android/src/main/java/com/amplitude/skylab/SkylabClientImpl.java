@@ -34,18 +34,22 @@ public class SkylabClientImpl implements SkylabClient {
     private static final int BASE_64_DEFAULT_FLAGS =
             Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE;
     static final Object STORAGE_LOCK = new Object();
-    OkHttpClient httpClient;
+
+    String instanceName;
+    Application application;
     String apiKey;
+    String enrollmentId;
     SkylabConfig config;
-    Storage storage;
     HttpUrl serverUrl;
+
+    SkylabContext context;
+    SkylabListener skylabListener;
+    IdentityProvider identityProvider;
+
+    Storage storage;
+    OkHttpClient httpClient;
     ScheduledThreadPoolExecutor executorService;
     ScheduledFuture<?> pollFuture;
-    SkylabListener skylabListener;
-    SkylabContext context;
-    Application application;
-    String enrollmentId;
-    IdentityProvider identityProvider;
 
     Runnable pollTask = new Runnable() {
         @Override
@@ -61,7 +65,7 @@ public class SkylabClientImpl implements SkylabClient {
         }
     };
 
-    SkylabClientImpl(Application application, String apiKey, SkylabConfig config, Storage storage
+    SkylabClientImpl(String instanceName, Application application, String apiKey, SkylabConfig config, Storage storage
             , OkHttpClient httpClient,
                      ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
@@ -69,6 +73,7 @@ public class SkylabClientImpl implements SkylabClient {
             throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
                     "apiKey.");
         }
+        this.instanceName = instanceName;
         this.apiKey = apiKey;
         this.httpClient = httpClient;
         this.executorService = executorService;
@@ -100,8 +105,9 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     public String loadFromStorage() {
+        // Use a common SharedPreferences across all instances for the enrollment ID
         SharedPreferences sharedPreferences =
-                application.getSharedPreferences(SkylabConfig.SHARED_PREFS_NAME,
+                application.getSharedPreferences(SkylabConfig.SHARED_PREFS_SHARED_NAME,
                         Context.MODE_PRIVATE);
         enrollmentId = sharedPreferences.getString(SkylabConfig.ENROLLMENT_ID_KEY, null);
         if (enrollmentId == null) {
@@ -155,6 +161,7 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     public Future<SkylabClient> refetchAll() {
+
         return executorService.submit(fetchAllCallable);
     }
 

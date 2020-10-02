@@ -2,8 +2,14 @@ package com.amplitude.skylab;
 
 public class SkylabConfig {
 
-    public static final String SHARED_PREFS_NAME = "amplitude.flags";
-    public static final String ENROLLMENT_ID_KEY = "amplitude.flags";
+    /**
+     * This is the common SharedPreferences name from which all SkylabClient instances can share
+     * information
+     */
+    public static final String SHARED_PREFS_SHARED_NAME = "amplitude-flags-shared";
+
+    public static final String SHARED_PREFS_STORAGE_NAME = "amplitude-flags-saved";
+    public static final String ENROLLMENT_ID_KEY = "enrollmentId";
 
     private static final String DEFAULT_SERVER_URL = "https://api.lab.amplitude.com/";
     private static final int DEFAULT_POLL_INTERVAL_SECS = 60 * 10;
@@ -38,6 +44,7 @@ public class SkylabConfig {
 
         /**
          * Sets the server endpoint from which to fetch flags
+         *
          * @param serverUrl
          * @return
          */
@@ -48,6 +55,7 @@ public class SkylabConfig {
 
         /**
          * Sets the polling interval
+         *
          * @param pollIntervalSecs
          * @return
          */
