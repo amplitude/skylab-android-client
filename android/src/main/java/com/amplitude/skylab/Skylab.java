@@ -30,7 +30,8 @@ public class Skylab {
             return t;
         }
     };
-    private static final ScheduledThreadPoolExecutor EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(0
+    private static final ScheduledThreadPoolExecutor EXECUTOR_SERVICE =
+            new ScheduledThreadPoolExecutor(0
             , DAEMON_THREAD_FACTORY);
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     private static final Map<String, SkylabClientImpl> INSTANCES = new ConcurrentHashMap<String,
