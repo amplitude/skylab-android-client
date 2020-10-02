@@ -12,6 +12,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.concurrent.Future;
+
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView navView;
@@ -34,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        SkylabClient client = Skylab.get("main");
-        client.startPolling();
+        SkylabClient client = Skylab.getInstance();
+        Future<SkylabClient> refetchFuture = client.refetchAll();
+
         if (client.getVariant("demo-notifications").equals("true")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
         } else {
@@ -46,6 +49,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Skylab.get("main").stopPolling();
     }
 }

@@ -154,6 +154,10 @@ public class SkylabClientImpl implements SkylabClient {
         return this;
     }
 
+    public Future<SkylabClient> refetchAll() {
+        return executorService.submit(fetchAllCallable);
+    }
+
     /**
      * Fetches all variants and returns a future that will complete when the network call is
      * complete.
@@ -272,17 +276,15 @@ public class SkylabClientImpl implements SkylabClient {
      */
     @Override
     public String getVariant(String flagKey, String fallback) {
-        long start = System.nanoTime();
         String variant;
         synchronized (STORAGE_LOCK) {
             variant = storage.get(flagKey);
         }
         if (variant == null) {
             variant = fallback;
+            Log.d(Skylab.TAG, String.format("Variant for %s not found, returning fallback variant" +
+                    " %s", flagKey, variant));
         }
-        long end = System.nanoTime();
-        Log.d(Skylab.TAG, String.format("Fetched %s in %.3f ms", flagKey,
-                (end - start) / 1000000.0));
         return variant;
     }
 

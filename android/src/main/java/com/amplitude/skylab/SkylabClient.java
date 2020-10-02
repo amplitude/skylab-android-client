@@ -29,6 +29,13 @@ public interface SkylabClient {
      */
     Future<SkylabClient> setContext(SkylabContext context);
 
+    /**
+     * Asynchronously refetches evaluations with the stored context.
+     *
+     * @return A future that resolves when the evaluations have been returned by the server
+     */
+    Future<SkylabClient> refetchAll();
+
     SkylabClient startPolling();
 
     SkylabClient stopPolling();
