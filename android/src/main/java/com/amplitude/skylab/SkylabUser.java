@@ -15,11 +15,13 @@ public class SkylabUser {
     String id;
     String userId;
     String deviceId;
+    JSONObject userProperties;
 
-    public SkylabUser(String id, String userId, String deviceId) {
+    public SkylabUser(String id, String userId, String deviceId, JSONObject userProperties) {
         this.id = id;
         this.userId = userId;
         this.deviceId = deviceId;
+        this.userProperties = userProperties;
     }
 
     /**
@@ -47,6 +49,7 @@ public class SkylabUser {
             object.put(ID, id);
             object.put(USER_ID, userId);
             object.put(DEVICE_ID, deviceId);
+            object.put("user_properties", userProperties);
         } catch (JSONException e) {
             Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
         }
@@ -61,6 +64,7 @@ public class SkylabUser {
         private String id;
         private String userId;
         private String deviceId;
+        private JSONObject userProperties = new JSONObject();
 
         /**
          * Sets the id. This is the default for determining variation enrollment.
@@ -94,8 +98,17 @@ public class SkylabUser {
             return this;
         }
 
+        public Builder setUserProperty(String property, Object value) {
+            try {
+                this.userProperties.put(property, value);
+            } catch (JSONException e) {
+                Log.e(Skylab.TAG, e.toString());
+            }
+            return this;
+        }
+
         public SkylabUser build() {
-            return new SkylabUser(id, userId, deviceId);
+            return new SkylabUser(id, userId, deviceId, userProperties);
         }
     }
 

@@ -25,7 +25,7 @@ public class ExampleApplication extends Application {
         amplitude.setUserId("test-user");
         client.setListener(new AmplitudeSkylabListener(amplitude));
         client.setIdentityProvider(new AmplitudeIdentityProvider(amplitude));
-        client.start(SkylabUser.builder().build());
+        client.start(SkylabUser.builder().setUserProperty("group", "Group 1").build());
     }
 
 
