@@ -9,7 +9,7 @@ import com.amplitude.api.AmplitudeSkylabListener;
 import com.amplitude.skylab.Skylab;
 import com.amplitude.skylab.SkylabClient;
 import com.amplitude.skylab.SkylabConfig;
-import com.amplitude.skylab.SkylabContext;
+import com.amplitude.skylab.SkylabUser;
 
 public class ExampleApplication extends Application {
     @Override
@@ -25,7 +25,7 @@ public class ExampleApplication extends Application {
         amplitude.setUserId("test-user");
         client.setListener(new AmplitudeSkylabListener(amplitude));
         client.setIdentityProvider(new AmplitudeIdentityProvider(amplitude));
-        client.start(SkylabContext.builder().build());
+        client.start(SkylabUser.builder().build());
     }
 
 

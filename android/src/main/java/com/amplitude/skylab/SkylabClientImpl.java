@@ -42,7 +42,7 @@ public class SkylabClientImpl implements SkylabClient {
     SkylabConfig config;
     HttpUrl serverUrl;
 
-    SkylabContext context;
+    SkylabUser skylabUser;
     SkylabListener skylabListener;
     IdentityProvider identityProvider;
 
@@ -85,16 +85,16 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     @Override
-    public Future<SkylabClient> start(SkylabContext context) {
+    public Future<SkylabClient> start(SkylabUser skylabUser) {
         loadFromStorage();
-        this.context = context;
+        this.skylabUser = skylabUser;
         return executorService.submit(fetchAllCallable);
     }
 
     @Override
-    public void start(SkylabContext context, long timeoutMs) {
+    public void start(SkylabUser skylabUser, long timeoutMs) {
         try {
-            Future<SkylabClient> future = start(context);
+            Future<SkylabClient> future = start(skylabUser);
             future.get(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             Log.i(Skylab.TAG, "Timeout while initializing client, evaluations may not be " +
@@ -126,13 +126,13 @@ public class SkylabClientImpl implements SkylabClient {
     }
 
     @Override
-    public Future<SkylabClient> setContext(SkylabContext context) {
-        if ((this.context == null && context == null) || (this.context != null && this.context.equals(context))) {
+    public Future<SkylabClient> setUser(SkylabUser skylabUser) {
+        if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
             final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
             future.complete(this);
             return future;
         } else {
-            this.context = context;
+            this.skylabUser = skylabUser;
             storage.clear();
             return executorService.submit(fetchAllCallable);
         }
@@ -174,24 +174,24 @@ public class SkylabClientImpl implements SkylabClient {
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
-        final JSONObject jsonContext = (context != null) ? context.toJSONObject() :
+        final JSONObject jsonContext = (skylabUser != null) ? skylabUser.toJSONObject() :
                 new JSONObject();
         try {
-            String skylabContextId = jsonContext.optString(SkylabContext.ID);
+            String skylabContextId = jsonContext.optString(SkylabUser.ID);
             Log.i(Skylab.TAG, skylabContextId);
             if (skylabContextId == null || skylabContextId.equals("")) {
-                jsonContext.put(SkylabContext.ID, enrollmentId);
+                jsonContext.put(SkylabUser.ID, enrollmentId);
             }
             if (identityProvider != null) {
-                if (!jsonContext.has(SkylabContext.DEVICE_ID)) {
-                    jsonContext.put(SkylabContext.DEVICE_ID, identityProvider.getDeviceId());
+                if (!jsonContext.has(SkylabUser.DEVICE_ID)) {
+                    jsonContext.put(SkylabUser.DEVICE_ID, identityProvider.getDeviceId());
                 }
-                if (!jsonContext.has(SkylabContext.USER_ID)) {
-                    jsonContext.put(SkylabContext.USER_ID, identityProvider.getUserId());
+                if (!jsonContext.has(SkylabUser.USER_ID)) {
+                    jsonContext.put(SkylabUser.USER_ID, identityProvider.getUserId());
                 }
             }
         } catch (JSONException e) {
-            Log.w(Skylab.TAG, "Error converting SkylabContext to JSONObject", e);
+            Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
         }
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
@@ -199,7 +199,7 @@ public class SkylabClientImpl implements SkylabClient {
         final HttpUrl url =
                 serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
         Log.d(Skylab.TAG,
-                "Requesting variants from " + url.toString() + " for context " + jsonContext.toString());
+                "Requesting variants from " + url.toString() + " for user " + jsonContext.toString());
         Request request = new Request.Builder().url(url).addHeader("Authorization",
                 "Api-Key " + this.apiKey)
                 .get().build();
@@ -239,7 +239,7 @@ public class SkylabClientImpl implements SkylabClient {
                                     changed.put(flag, newValue);
                                 }
                             }
-                            fireOnVariantReceived(context, changed);
+                            fireOnVariantReceived(skylabUser, changed);
                         }
                     } else {
                         Log.w(Skylab.TAG, responseString);
@@ -255,7 +255,7 @@ public class SkylabClientImpl implements SkylabClient {
                 }
                 future.complete(SkylabClientImpl.this);
                 long end = System.nanoTime();
-                Log.d(Skylab.TAG, String.format("Fetched all: %s for context %s in %.3f ms",
+                Log.d(Skylab.TAG, String.format("Fetched all: %s for user %s in %.3f ms",
                         responseString, jsonContext.toString(), (end - start) / 1000000.0));
             }
         });
@@ -307,9 +307,9 @@ public class SkylabClientImpl implements SkylabClient {
         return this;
     }
 
-    private void fireOnVariantReceived(SkylabContext context, Map<String, String> variants) {
+    private void fireOnVariantReceived(SkylabUser skylabUser, Map<String, String> variants) {
         if (this.skylabListener != null) {
-            this.skylabListener.onVariantsChanged(context, variants);
+            this.skylabListener.onVariantsChanged(skylabUser, variants);
         }
     }
 

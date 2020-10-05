@@ -6,7 +6,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SkylabContext {
+public class SkylabUser {
 
     public static final String ID = "id";
     public static final String USER_ID = "user_id";
@@ -16,14 +16,14 @@ public class SkylabContext {
     String userId;
     String deviceId;
 
-    public SkylabContext(String id, String userId, String deviceId) {
+    public SkylabUser(String id, String userId, String deviceId) {
         this.id = id;
         this.userId = userId;
         this.deviceId = deviceId;
     }
 
     /**
-     * Two contexts are equal if the JSON representations of the contexts are equal
+     * Two contexts are equal if the JSON representations of the users are equal
      *
      * @param o
      * @return
@@ -32,7 +32,7 @@ public class SkylabContext {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SkylabContext other = (SkylabContext) o;
+        SkylabUser other = (SkylabUser) o;
         return this.toJSONObject().equals(other.toJSONObject());
     }
 
@@ -48,13 +48,13 @@ public class SkylabContext {
             object.put(USER_ID, userId);
             object.put(DEVICE_ID, deviceId);
         } catch (JSONException e) {
-            Log.w(Skylab.TAG, "Error converting SkylabContext to JSONObject", e);
+            Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
         }
         return object;
     }
 
-    public static SkylabContext.Builder builder() {
-        return new SkylabContext.Builder();
+    public static SkylabUser.Builder builder() {
+        return new SkylabUser.Builder();
     }
 
     public static class Builder {
@@ -75,7 +75,7 @@ public class SkylabContext {
         }
 
         /**
-         * Sets the user id on the SkylabContext for connecting with Amplitude's identity
+         * Sets the user id on the SkylabUser for connecting with Amplitude's identity
          * @param userId
          * @return
          */
@@ -85,7 +85,7 @@ public class SkylabContext {
         }
 
         /**
-         * Sets the device id on the SkylabContext for connecting with Amplitude's identity
+         * Sets the device id on the SkylabUser for connecting with Amplitude's identity
          * @param deviceId
          * @return
          */
@@ -94,8 +94,8 @@ public class SkylabContext {
             return this;
         }
 
-        public SkylabContext build() {
-            return new SkylabContext(id, userId, deviceId);
+        public SkylabUser build() {
+            return new SkylabUser(id, userId, deviceId);
         }
     }
 

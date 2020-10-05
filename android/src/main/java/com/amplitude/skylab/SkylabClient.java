@@ -5,32 +5,32 @@ import java.util.concurrent.Future;
 public interface SkylabClient {
 
     /**
-     * Fetches evaluations with the given context. If context is null, will fetch with an empty
-     * context.
+     * Fetches evaluations with the given SkylabUser. If skylabUser is null, will fetch with an empty
+     * SkylabUser.
      *
      * @return A future that resolves when the evaluations have been returned by the server
      */
-    Future<SkylabClient> start(SkylabContext context);
+    Future<SkylabClient> start(SkylabUser skylabUser);
 
     /**
-     * Calls `start(context)` and blocks for timeoutMs
+     * Calls `start(skylabUser)` and blocks for timeoutMs
      *
-     * @param context
+     * @param skylabUser
      * @param timeoutMs
      */
-    void start(SkylabContext context, long timeoutMs);
+    void start(SkylabUser skylabUser, long timeoutMs);
 
     /**
-     * Sets the evaluation context. Clears the local cache if the context has changed and
+     * Sets the evaluation SkylabUser. Clears the local cache if the SkylabUser has changed and
      * refetches evaluations.
      *
-     * @param context
+     * @param skylabUser
      * @return A future that resolves when the evaluations have been returned by the server
      */
-    Future<SkylabClient> setContext(SkylabContext context);
+    Future<SkylabClient> setUser(SkylabUser skylabUser);
 
     /**
-     * Asynchronously refetches evaluations with the stored context.
+     * Asynchronously refetches evaluations with the stored SkylabUser.
      *
      * @return A future that resolves when the evaluations have been returned by the server
      */
@@ -58,7 +58,7 @@ public interface SkylabClient {
     String getVariant(String flagKey, String fallback);
 
     /**
-     * Sets an identity provider that enriches the SkylabContext with a user_id and device_id
+     * Sets an identity provider that enriches the SkylabUser with a user_id and device_id
      * when fetching flags. The enrichment happens at the time a new network request is made.
      * This is used to connect Skylab to Amplitude identities.
      */
