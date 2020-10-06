@@ -1,27 +1,54 @@
 package com.amplitude.skylab;
 
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Locale;
 
 public class SkylabUser {
 
     public static final String ID = "id";
     public static final String USER_ID = "user_id";
     public static final String DEVICE_ID = "device_id";
+    public static final String COUNTRY = "country";
+    public static final String REGION = "region";
+    public static final String CITY = "city";
+    public static final String LANGUAGE = "language";
+    public static final String PLATFORM = "platform";
+    public static final String VERSION = "version";
+
+    public static final String ANDROID_PLATFORM = "Android";
 
     String id;
     String userId;
     String deviceId;
+    String country;
+    String region;
+    String city;
+    String language;
+    String platform;
+    String version;
     JSONObject userProperties;
 
-    public SkylabUser(String id, String userId, String deviceId, JSONObject userProperties) {
+    public SkylabUser(String id, String userId, String deviceId, JSONObject userProperties,
+                      String country, String region, String city, String language,
+                      String platform, String version) {
         this.id = id;
         this.userId = userId;
         this.deviceId = deviceId;
         this.userProperties = userProperties;
+        this.country = country;
+        this.region = region;
+        this.city = city;
+        this.language = language;
+        this.platform = platform;
+        this.version = version;
     }
 
     /**
@@ -50,6 +77,12 @@ public class SkylabUser {
             object.put(USER_ID, userId);
             object.put(DEVICE_ID, deviceId);
             object.put("user_properties", userProperties);
+            object.put(COUNTRY, country);
+            object.put(REGION, region);
+            object.put(CITY, city);
+            object.put(LANGUAGE, language);
+            object.put(PLATFORM, platform);
+            object.put(VERSION, version);
         } catch (JSONException e) {
             Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
         }
@@ -64,12 +97,19 @@ public class SkylabUser {
         private String id;
         private String userId;
         private String deviceId;
+        private String country;
+        private String region;
+        private String city;
+        private String language;
+        private String platform;
+        private String version;
         private JSONObject userProperties = new JSONObject();
 
         /**
          * Sets the id. This is the default for determining variation enrollment.
          * If this is null or an empty string, a locally-persisted unique identifier
          * will be used when fetching flags instead.
+         *
          * @param id
          * @return this
          */
@@ -80,6 +120,7 @@ public class SkylabUser {
 
         /**
          * Sets the user id on the SkylabUser for connecting with Amplitude's identity
+         *
          * @param userId
          * @return
          */
@@ -90,11 +131,64 @@ public class SkylabUser {
 
         /**
          * Sets the device id on the SkylabUser for connecting with Amplitude's identity
+         *
          * @param deviceId
          * @return
          */
         public Builder setDeviceId(String deviceId) {
             this.deviceId = deviceId;
+            return this;
+        }
+
+        public Builder setCountry(String country) {
+            this.country = country;
+            return this;
+        }
+
+        public Builder setRegion(String region) {
+            this.region = region;
+            return this;
+        }
+
+        public Builder setCity(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder setLanguage(String language) {
+            this.language = language;
+            return this;
+        }
+
+        public Builder withDetectedLanguage() {
+            return setLanguage(Locale.getDefault().getLanguage());
+        }
+
+        public Builder setPlatform(String platform) {
+            this.platform = platform;
+            return this;
+        }
+
+        public Builder withDetectedPlatform() {
+            return setPlatform(ANDROID_PLATFORM);
+        }
+
+        public Builder setVersion(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder withDetectedVersion(Context context) {
+            PackageInfo packageInfo;
+            try {
+                packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName()
+                        , 0);
+                return setVersion(packageInfo.versionName);
+            } catch (PackageManager.NameNotFoundException e) {
+
+            } catch (Exception e) {
+
+            }
             return this;
         }
 
@@ -108,7 +202,8 @@ public class SkylabUser {
         }
 
         public SkylabUser build() {
-            return new SkylabUser(id, userId, deviceId, userProperties);
+            return new SkylabUser(id, userId, deviceId, userProperties, country, region, city,
+                    language, platform, version);
         }
     }
 
