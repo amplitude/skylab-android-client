@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -112,17 +113,17 @@ public class SkylabClientImpl implements SkylabClient {
         enrollmentId = sharedPreferences.getString(SkylabConfig.ENROLLMENT_ID_KEY, null);
         if (enrollmentId == null) {
             Log.i(Skylab.TAG, "Creating new id for enrollment");
-            enrollmentId = uuidToBase64(UUID.randomUUID());
+            enrollmentId = uuidToBase36(UUID.randomUUID());
             sharedPreferences.edit().putString(SkylabConfig.ENROLLMENT_ID_KEY, enrollmentId).apply();
         }
         return enrollmentId;
     }
 
-    private static String uuidToBase64(UUID uuid) {
+    private static String uuidToBase36(UUID uuid) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
-        return Base64.encodeToString(bb.array(), BASE_64_DEFAULT_FLAGS);
+        return new BigInteger(1, bb.array()).toString(36);
     }
 
     @Override
