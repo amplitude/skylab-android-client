@@ -58,6 +58,10 @@ public class Skylab {
     /**
      * Initializes a SkylabClient with the given name. If a SkylabClient already exists with the
      * provided name, returns that instance instead.
+     *
+     * @param application The Android Application context
+     * @param apiKey  The Client key. This can be found in the Skylab settings and should not be null or empty.
+     * @param config see {@link SkylabConfig} for configuration options
      */
     public static synchronized SkylabClient init(Application application,
                                                  String apiKey, SkylabConfig config) {
@@ -67,6 +71,11 @@ public class Skylab {
     /**
      * Initializes a SkylabClient with associated with the provided name. If a SkylabClient
      * already exists with the provided name, returns that instance instead.
+     *
+     * @param name A name for identifying this instance. This is also used for namespacing local storage
+     * @param application The Android Application context
+     * @param apiKey  The Client key. This can be found in the Skylab settings and should not be null or empty.
+     * @param config see {@link SkylabConfig} for configuration options
      */
     public static synchronized SkylabClient init(String name, Application application,
                                                  String apiKey,

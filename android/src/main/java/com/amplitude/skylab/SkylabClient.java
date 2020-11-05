@@ -2,6 +2,9 @@ package com.amplitude.skylab;
 
 import java.util.concurrent.Future;
 
+/**
+ * Skylab client interface
+ */
 public interface SkylabClient {
 
     /**
@@ -60,10 +63,13 @@ public interface SkylabClient {
     /**
      * Sets an identity provider that enriches the SkylabUser with a user_id and device_id
      * when fetching flags. The enrichment happens at the time a new network request is made.
-     * This is used to connect Skylab to Amplitude identities.
+     * This is used to connect Skylab to Amplitude identities. See {@link IdentityProvider}.
      */
     SkylabClient setIdentityProvider(IdentityProvider provider);
 
+    /**
+     * Sets a listener for enrollment events. See {@link SkylabListener}
+     */
     SkylabClient setListener(SkylabListener skylabListener);
 
 }

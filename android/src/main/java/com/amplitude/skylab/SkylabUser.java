@@ -11,6 +11,12 @@ import org.json.JSONObject;
 
 import java.util.Locale;
 
+/**
+ * The Skylab user context object. This is an immutable object that can be created using
+ * a {@link SkylabUser.Builder}. Example usage:
+ *
+ * {@code SkylabUser.builder().setLanguage("en").withDetectedPlatform().build()}
+ */
 public class SkylabUser {
 
     public static final String ID = "id";
@@ -121,8 +127,7 @@ public class SkylabUser {
         /**
          * Sets the user id on the SkylabUser for connecting with Amplitude's identity
          *
-         * @param userId
-         * @return
+         * @param userId The User ID used in Amplitude
          */
         public Builder setUserId(String userId) {
             this.userId = userId;
@@ -132,8 +137,7 @@ public class SkylabUser {
         /**
          * Sets the device id on the SkylabUser for connecting with Amplitude's identity
          *
-         * @param deviceId
-         * @return
+         * @param deviceId The Device ID used in Amplitude
          */
         public Builder setDeviceId(String deviceId) {
             this.deviceId = deviceId;
@@ -160,6 +164,9 @@ public class SkylabUser {
             return this;
         }
 
+        /**
+         * Sets the language to the default locale language.
+         */
         public Builder withDetectedLanguage() {
             return setLanguage(Locale.getDefault().getLanguage());
         }
@@ -169,6 +176,9 @@ public class SkylabUser {
             return this;
         }
 
+        /**
+         * Sets the platform to {@link SkylabUser#ANDROID_PLATFORM}
+         */
         public Builder withDetectedPlatform() {
             return setPlatform(ANDROID_PLATFORM);
         }
@@ -178,6 +188,9 @@ public class SkylabUser {
             return this;
         }
 
+        /**
+         * Sets the version to the versionName of the provided Android context.
+         */
         public Builder withDetectedVersion(Context context) {
             PackageInfo packageInfo;
             try {
@@ -192,6 +205,9 @@ public class SkylabUser {
             return this;
         }
 
+        /**
+         * Sets a custom user property for use in rule-based targeting
+         */
         public Builder setUserProperty(String property, Object value) {
             try {
                 this.userProperties.put(property, value);

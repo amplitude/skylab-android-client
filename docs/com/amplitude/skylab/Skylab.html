@@ -376,6 +376,12 @@ extends java.lang.Object</pre>
                                 <a href="SkylabConfig.html" title="class in com.amplitude.skylab">SkylabConfig</a>&nbsp;config)</pre>
 <div class="block">Initializes a SkylabClient with the given name. If a SkylabClient already exists with the
  provided name, returns that instance instead.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>application</code> - The Android Application context</dd>
+<dd><code>apiKey</code> - The Client key. This can be found in the Skylab settings and should not be null or empty.</dd>
+<dd><code>config</code> - see <a href="SkylabConfig.html" title="class in com.amplitude.skylab"><code>SkylabConfig</code></a> for configuration options</dd>
+</dl>
 </li>
 </ul>
 <a id="init(java.lang.String,android.app.Application,java.lang.String,com.amplitude.skylab.SkylabConfig)">
@@ -390,6 +396,13 @@ extends java.lang.Object</pre>
                                 <a href="SkylabConfig.html" title="class in com.amplitude.skylab">SkylabConfig</a>&nbsp;config)</pre>
 <div class="block">Initializes a SkylabClient with associated with the provided name. If a SkylabClient
  already exists with the provided name, returns that instance instead.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - A name for identifying this instance. This is also used for namespacing local storage</dd>
+<dd><code>application</code> - The Android Application context</dd>
+<dd><code>apiKey</code> - The Client key. This can be found in the Skylab settings and should not be null or empty.</dd>
+<dd><code>config</code> - see <a href="SkylabConfig.html" title="class in com.amplitude.skylab"><code>SkylabConfig</code></a> for configuration options</dd>
+</dl>
 </li>
 </ul>
 <a id="shutdown()">

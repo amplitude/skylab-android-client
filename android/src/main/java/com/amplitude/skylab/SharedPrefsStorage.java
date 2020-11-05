@@ -7,6 +7,11 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Simple SharedPrefs backed storage for caching enrollment values locally.
+ *
+ * This is not multi-process safe.
+ */
 public class SharedPrefsStorage implements Storage {
 
     Context appContext;

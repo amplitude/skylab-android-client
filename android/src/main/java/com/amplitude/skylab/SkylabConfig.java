@@ -1,10 +1,16 @@
 package com.amplitude.skylab;
 
+/**
+ * Configuration options. This is an immutable object that can be created using
+ *  * a {@link SkylabConfig.Builder}. Example usage:
+ *  *
+ *  * {@code SkylabConfig.builder().setServerUrl("https://api.lab.amplitude.com/").build()}
+ */
 public class SkylabConfig {
 
     /**
-     * This is the common SharedPreferences name from which all SkylabClient instances can share
-     * information
+     * Common SharedPreferences name from which all SkylabClient instances can share
+     * information.
      */
     public static final String SHARED_PREFS_SHARED_NAME = "amplitude-flags-shared";
 

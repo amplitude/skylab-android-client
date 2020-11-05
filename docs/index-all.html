@@ -250,7 +250,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.html#ID">ID</a></span> - Static variable in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/amplitude/skylab/IdentityProvider.html" title="interface in com.amplitude.skylab"><span class="typeNameLink">IdentityProvider</span></a> - Interface in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Classes can implement this interface to provide a User ID and Device ID to the
+  <a href="com/amplitude/skylab/SkylabUser.html" title="class in com.amplitude.skylab"><code>SkylabUser</code></a> context object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/Skylab.html#init(android.app.Application,java.lang.String,com.amplitude.skylab.SkylabConfig)">init(Application, String, SkylabConfig)</a></span> - Static method in class com.amplitude.skylab.<a href="com/amplitude/skylab/Skylab.html" title="class in com.amplitude.skylab">Skylab</a></dt>
 <dd>
 <div class="block">Initializes a SkylabClient with the given name.</div>
@@ -343,7 +346,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#setLanguage(java.lang.String)">setLanguage(String)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClient.html#setListener(com.amplitude.skylab.SkylabListener)">setListener(SkylabListener)</a></span> - Method in interface com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets a listener for enrollment events.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClientImpl.html#setListener(com.amplitude.skylab.SkylabListener)">setListener(SkylabListener)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab">SkylabClientImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#setPlatform(java.lang.String)">setPlatform(String)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
@@ -363,24 +368,30 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Sets the evaluation SkylabUser.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClientImpl.html#setUser(com.amplitude.skylab.SkylabUser)">setUser(SkylabUser)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab">SkylabClientImpl</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">See <a href="com/amplitude/skylab/SkylabClient.html#setUser(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.setUser(com.amplitude.skylab.SkylabUser)</code></a></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#setUserId(java.lang.String)">setUserId(String)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
 <dd>
 <div class="block">Sets the user id on the SkylabUser for connecting with Amplitude's identity</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#setUserProperty(java.lang.String,java.lang.Object)">setUserProperty(String, Object)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets a custom user property for use in rule-based targeting</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#setVersion(java.lang.String)">setVersion(String)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabConfig.html#SHARED_PREFS_SHARED_NAME">SHARED_PREFS_SHARED_NAME</a></span> - Static variable in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabConfig.html" title="class in com.amplitude.skylab">SkylabConfig</a></dt>
 <dd>
-<div class="block">This is the common SharedPreferences name from which all SkylabClient instances can share
- information</div>
+<div class="block">Common SharedPreferences name from which all SkylabClient instances can share
+ information.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabConfig.html#SHARED_PREFS_STORAGE_NAME">SHARED_PREFS_STORAGE_NAME</a></span> - Static variable in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabConfig.html" title="class in com.amplitude.skylab">SkylabConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/amplitude/skylab/SharedPrefsStorage.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SharedPrefsStorage</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Simple SharedPrefs backed storage for caching enrollment values locally.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SharedPrefsStorage.html#%3Cinit%3E(android.content.Context,java.lang.String)">SharedPrefsStorage(Context, String)</a></span> - Constructor for class com.amplitude.skylab.<a href="com/amplitude/skylab/SharedPrefsStorage.html" title="class in com.amplitude.skylab">SharedPrefsStorage</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/Skylab.html#shutdown()">shutdown()</a></span> - Static method in class com.amplitude.skylab.<a href="com/amplitude/skylab/Skylab.html" title="class in com.amplitude.skylab">Skylab</a></dt>
@@ -394,17 +405,27 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/Skylab.html#%3Cinit%3E()">Skylab()</a></span> - Constructor for class com.amplitude.skylab.<a href="com/amplitude/skylab/Skylab.html" title="class in com.amplitude.skylab">Skylab</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/amplitude/skylab/SkylabClient.html" title="interface in com.amplitude.skylab"><span class="typeNameLink">SkylabClient</span></a> - Interface in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Skylab client interface</div>
+</dd>
 <dt><a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SkylabClientImpl</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Default <a href="com/amplitude/skylab/SkylabClient.html" title="interface in com.amplitude.skylab"><code>SkylabClient</code></a> implementation.</div>
+</dd>
 <dt><a href="com/amplitude/skylab/SkylabConfig.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SkylabConfig</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Configuration options.</div>
+</dd>
 <dt><a href="com/amplitude/skylab/SkylabConfig.Builder.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SkylabConfig.Builder</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/amplitude/skylab/SkylabListener.html" title="interface in com.amplitude.skylab"><span class="typeNameLink">SkylabListener</span></a> - Interface in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Classes can implement this interface to handle changes in enrollment.</div>
+</dd>
 <dt><a href="com/amplitude/skylab/SkylabUser.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SkylabUser</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The Skylab user context object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String,org.json.JSONObject,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)">SkylabUser(String, String, String, JSONObject, String, String, String, String, String, String)</a></span> - Constructor for class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab"><span class="typeNameLink">SkylabUser.Builder</span></a> - Class in <a href="com/amplitude/skylab/package-summary.html">com.amplitude.skylab</a></dt>
@@ -414,13 +435,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Fetches evaluations with the given SkylabUser.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClientImpl.html#start(com.amplitude.skylab.SkylabUser)">start(SkylabUser)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab">SkylabClientImpl</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">See <a href="com/amplitude/skylab/SkylabClient.html#start(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.start(SkylabUser)</code></a></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)">start(SkylabUser, long)</a></span> - Method in interface com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></dt>
 <dd>
 <div class="block">Calls `start(skylabUser)` and blocks for timeoutMs</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClientImpl.html#start(com.amplitude.skylab.SkylabUser,long)">start(SkylabUser, long)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab">SkylabClientImpl</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">See <a href="com/amplitude/skylab/SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)"><code>SkylabClient.start(SkylabUser, long)</code></a></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClient.html#startPolling()">startPolling()</a></span> - Method in interface com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabClientImpl.html#startPolling()">startPolling()</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabClientImpl.html" title="class in com.amplitude.skylab">SkylabClientImpl</a></dt>
@@ -468,11 +493,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h2 class="title">W</h2>
 <dl>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#withDetectedLanguage()">withDetectedLanguage()</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the language to the default locale language.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#withDetectedPlatform()">withDetectedPlatform()</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the platform to <a href="com/amplitude/skylab/SkylabUser.html#ANDROID_PLATFORM"><code>SkylabUser.ANDROID_PLATFORM</code></a></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/amplitude/skylab/SkylabUser.Builder.html#withDetectedVersion(android.content.Context)">withDetectedVersion(Context)</a></span> - Method in class com.amplitude.skylab.<a href="com/amplitude/skylab/SkylabUser.Builder.html" title="class in com.amplitude.skylab">SkylabUser.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the version to the versionName of the provided Android context.</div>
+</dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes</a>&nbsp;<a href="allpackages-index.html">All&nbsp;Packages</a></div>
 </main>

@@ -138,6 +138,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">SkylabClientImpl</span>
 extends java.lang.Object
 implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></pre>
+<div class="block">Default <a href="SkylabClient.html" title="interface in com.amplitude.skylab"><code>SkylabClient</code></a> implementation. Use the <a href="Skylab.html" title="class in com.amplitude.skylab"><code>Skylab</code></a> class to initialize and access
+ instances.</div>
 </li>
 </ul>
 </div>
@@ -196,20 +198,22 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setListener(com.amplitude.skylab.SkylabListener)">setListener</a></span>&#8203;(<a href="SkylabListener.html" title="interface in com.amplitude.skylab">SkylabListener</a>&nbsp;skylabListener)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Sets a listener for enrollment events.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.concurrent.Future&lt;<a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setUser(com.amplitude.skylab.SkylabUser)">setUser</a></span>&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser)</code></th>
 <td class="colLast">
-<div class="block">Sets the evaluation SkylabUser.</div>
+<div class="block">See <a href="SkylabClient.html#setUser(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.setUser(com.amplitude.skylab.SkylabUser)</code></a></div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.concurrent.Future&lt;<a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#start(com.amplitude.skylab.SkylabUser)">start</a></span>&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser)</code></th>
 <td class="colLast">
-<div class="block">Fetches evaluations with the given SkylabUser.</div>
+<div class="block">See <a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.start(SkylabUser)</code></a></div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -217,7 +221,7 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#start(com.amplitude.skylab.SkylabUser,long)">start</a></span>&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser,
      long&nbsp;timeoutMs)</code></th>
 <td class="colLast">
-<div class="block">Calls `start(skylabUser)` and blocks for timeoutMs</div>
+<div class="block">See <a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)"><code>SkylabClient.start(SkylabUser, long)</code></a></div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -261,9 +265,7 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <li class="blockList">
 <h4>start</h4>
 <pre class="methodSignature">public&nbsp;java.util.concurrent.Future&lt;<a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a>&gt;&nbsp;start&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser)">SkylabClient</a></code></span></div>
-<div class="block">Fetches evaluations with the given SkylabUser. If skylabUser is null, will fetch with an empty
- SkylabUser.</div>
+<div class="block">See <a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.start(SkylabUser)</code></a></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser)">start</a></code>&nbsp;in interface&nbsp;<code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></dd>
@@ -280,8 +282,7 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <h4>start</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;start&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser,
                   long&nbsp;timeoutMs)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)">SkylabClient</a></code></span></div>
-<div class="block">Calls `start(skylabUser)` and blocks for timeoutMs</div>
+<div class="block">See <a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)"><code>SkylabClient.start(SkylabUser, long)</code></a></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="SkylabClient.html#start(com.amplitude.skylab.SkylabUser,long)">start</a></code>&nbsp;in interface&nbsp;<code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></dd>
@@ -304,9 +305,7 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <li class="blockList">
 <h4>setUser</h4>
 <pre class="methodSignature">public&nbsp;java.util.concurrent.Future&lt;<a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a>&gt;&nbsp;setUser&#8203;(<a href="SkylabUser.html" title="class in com.amplitude.skylab">SkylabUser</a>&nbsp;skylabUser)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="SkylabClient.html#setUser(com.amplitude.skylab.SkylabUser)">SkylabClient</a></code></span></div>
-<div class="block">Sets the evaluation SkylabUser. Clears the local cache if the SkylabUser has changed and
- refetches evaluations.</div>
+<div class="block">See <a href="SkylabClient.html#setUser(com.amplitude.skylab.SkylabUser)"><code>SkylabClient.setUser(com.amplitude.skylab.SkylabUser)</code></a></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="SkylabClient.html#setUser(com.amplitude.skylab.SkylabUser)">setUser</a></code>&nbsp;in interface&nbsp;<code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></dd>
@@ -405,7 +404,7 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="SkylabClient.html#setIdentityProvider(com.amplitude.skylab.IdentityProvider)">SkylabClient</a></code></span></div>
 <div class="block">Sets an identity provider that enriches the SkylabUser with a user_id and device_id
  when fetching flags. The enrichment happens at the time a new network request is made.
- This is used to connect Skylab to Amplitude identities.</div>
+ This is used to connect Skylab to Amplitude identities. See <a href="IdentityProvider.html" title="interface in com.amplitude.skylab"><code>IdentityProvider</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="SkylabClient.html#setIdentityProvider(com.amplitude.skylab.IdentityProvider)">setIdentityProvider</a></code>&nbsp;in interface&nbsp;<code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></dd>
@@ -419,6 +418,8 @@ implements <a href="SkylabClient.html" title="interface in com.amplitude.skylab"
 <li class="blockList">
 <h4>setListener</h4>
 <pre class="methodSignature">public&nbsp;<a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a>&nbsp;setListener&#8203;(<a href="SkylabListener.html" title="interface in com.amplitude.skylab">SkylabListener</a>&nbsp;skylabListener)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="SkylabClient.html#setListener(com.amplitude.skylab.SkylabListener)">SkylabClient</a></code></span></div>
+<div class="block">Sets a listener for enrollment events. See <a href="SkylabListener.html" title="interface in com.amplitude.skylab"><code>SkylabListener</code></a></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="SkylabClient.html#setListener(com.amplitude.skylab.SkylabListener)">setListener</a></code>&nbsp;in interface&nbsp;<code><a href="SkylabClient.html" title="interface in com.amplitude.skylab">SkylabClient</a></code></dd>

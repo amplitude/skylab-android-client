@@ -31,6 +31,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Default {@link SkylabClient} implementation. Use the {@link Skylab} class to initialize and access
+ * instances.
+ */
 public class SkylabClientImpl implements SkylabClient {
     private static final int BASE_64_DEFAULT_FLAGS =
             Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE;
@@ -85,6 +89,9 @@ public class SkylabClientImpl implements SkylabClient {
         serverUrl = HttpUrl.parse(config.getServerUrl());
     }
 
+    /**
+     * See {@link SkylabClient#start(SkylabUser)}
+     */
     @Override
     public Future<SkylabClient> start(SkylabUser skylabUser) {
         loadFromStorage();
@@ -92,6 +99,9 @@ public class SkylabClientImpl implements SkylabClient {
         return executorService.submit(fetchAllCallable);
     }
 
+    /**
+     * See {@link SkylabClient#start(SkylabUser, long)}
+     */
     @Override
     public void start(SkylabUser skylabUser, long timeoutMs) {
         try {
@@ -126,6 +136,9 @@ public class SkylabClientImpl implements SkylabClient {
         return new BigInteger(1, bb.array()).toString(36);
     }
 
+    /**
+     * See {@link SkylabClient#setUser}
+     */
     @Override
     public Future<SkylabClient> setUser(SkylabUser skylabUser) {
         if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
