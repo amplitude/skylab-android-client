@@ -1,5 +1,7 @@
 package com.amplitude.skylab;
 
+import android.text.TextUtils;
+
 /**
  * Configuration options. This is an immutable object that can be created using
  *  * a {@link SkylabConfig.Builder}. Example usage:
@@ -12,20 +14,51 @@ public class SkylabConfig {
      * Common SharedPreferences name from which all SkylabClient instances can share
      * information.
      */
-    public static final String SHARED_PREFS_SHARED_NAME = "amplitude-flags-shared";
+    static final String SHARED_PREFS_SHARED_NAME = "amplitude-flags-shared";
 
-    public static final String SHARED_PREFS_STORAGE_NAME = "amplitude-flags-saved";
-    public static final String ENROLLMENT_ID_KEY = "enrollmentId";
+    static final String SHARED_PREFS_STORAGE_NAME = "amplitude-flags-saved";
+    static final String ENROLLMENT_ID_KEY = "enrollmentId";
 
-    private static final String DEFAULT_SERVER_URL = "https://api.lab.amplitude.com/";
-    private static final int DEFAULT_POLL_INTERVAL_SECS = 60 * 10;
+    /**
+     * Defaults for {@link SkylabConfig}
+     */
+    public static final class Defaults {
+        /**
+         * "https://api.lab.amplitude.com/"
+         */
+        public static final String SERVER_URL = "https://api.lab.amplitude.com/";
+
+        /**
+         * 6000
+         */
+        public static final int POLL_INTERVAL_SECS = 60 * 10;
+
+        /**
+         * ""
+         */
+        public static final String FALLBACK_VARIANT = "";
+
+        /**
+         * ""
+         */
+        public static final String INSTANCE_NAME = "";
+    }
 
     private String serverUrl;
     private int pollIntervalSecs;
+    private String fallbackVariant;
+    private String instanceName;
 
-    private SkylabConfig(String serverUrl, int pollIntervalSecs) {
+    private SkylabConfig(
+            String serverUrl,
+            int pollIntervalSecs,
+            String fallbackVariant,
+            String instanceName
+    ) {
         this.serverUrl = serverUrl;
         this.pollIntervalSecs = pollIntervalSecs;
+        this.fallbackVariant = fallbackVariant;
+        this.instanceName = instanceName;
     }
 
     public String getServerUrl() {
@@ -36,16 +69,26 @@ public class SkylabConfig {
         return pollIntervalSecs;
     }
 
+    public String getFallbackVariant() {
+        return fallbackVariant;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private String serverUrl = DEFAULT_SERVER_URL;
-        private int pollIntervalSecs = DEFAULT_POLL_INTERVAL_SECS;
+        private String serverUrl = Defaults.SERVER_URL;
+        private int pollIntervalSecs = Defaults.POLL_INTERVAL_SECS;
+        private String fallbackVariant = Defaults.FALLBACK_VARIANT;
+        private String instanceName = Defaults.INSTANCE_NAME;
 
         public SkylabConfig build() {
-            return new SkylabConfig(serverUrl, pollIntervalSecs);
+            return new SkylabConfig(serverUrl, pollIntervalSecs, fallbackVariant, instanceName);
         }
 
         /**
@@ -69,5 +112,34 @@ public class SkylabConfig {
             this.pollIntervalSecs = pollIntervalSecs;
             return this;
         }
+
+        /**
+         * Sets the fallback variant
+         *
+         * @param fallbackVariant
+         * @return
+         */
+        public Builder setFallbackVariant(String fallbackVariant) {
+            this.fallbackVariant = fallbackVariant;
+            return this;
+        }
+
+        /**
+         * Sets the instanceName
+         *
+         * @param instanceName
+         * @return
+         */
+        public Builder setInstanceName(String instanceName) {
+            this.instanceName = normalizeInstanceName(instanceName);
+            return this;
+        }
+    }
+
+    static String normalizeInstanceName(String instance) {
+        if (TextUtils.isEmpty(instance)) {
+            instance = SkylabConfig.Defaults.INSTANCE_NAME;
+        }
+        return instance.toLowerCase();
     }
 }

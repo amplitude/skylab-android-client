@@ -20,8 +20,6 @@ import okhttp3.OkHttpClient;
 public class Skylab {
 
     public static final String TAG = "Skylab";
-    public static final String DEFAULT_VARIANT = "false";
-    public static final String DEFAULT_INSTANCE = "$default_instance";
 
     private static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
         public Thread newThread(Runnable r) {
@@ -43,7 +41,7 @@ public class Skylab {
      * Returns the default SkylabClient instance
      */
     public static SkylabClient getInstance() {
-        return getInstance(DEFAULT_INSTANCE);
+        return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
     }
 
     /**
@@ -51,13 +49,14 @@ public class Skylab {
      * was initialized with the given name, returns null.
      */
     public static SkylabClient getInstance(String name) {
-        String normalizedName = Utils.normalizeInstanceName(name);
+        String normalizedName = SkylabConfig.normalizeInstanceName(name);
         return INSTANCES.get(normalizedName);
     }
 
     /**
-     * Initializes a SkylabClient with the given name. If a SkylabClient already exists with the
-     * provided name, returns that instance instead.
+     * Initializes a SkylabClient with the provided api key and {@link SkylabConfig}.
+     * If a SkylabClient already exists with the instanceName set by the {@link SkylabConfig},
+     * returns that instance instead.
      *
      * @param application The Android Application context
      * @param apiKey  The Client key. This can be found in the Skylab settings and should not be null or empty.
@@ -65,27 +64,12 @@ public class Skylab {
      */
     public static synchronized SkylabClient init(Application application,
                                                  String apiKey, SkylabConfig config) {
-        return init(DEFAULT_INSTANCE, application, apiKey, config);
-    }
-
-    /**
-     * Initializes a SkylabClient with associated with the provided name. If a SkylabClient
-     * already exists with the provided name, returns that instance instead.
-     *
-     * @param name A name for identifying this instance. This is also used for namespacing local storage
-     * @param application The Android Application context
-     * @param apiKey  The Client key. This can be found in the Skylab settings and should not be null or empty.
-     * @param config see {@link SkylabConfig} for configuration options
-     */
-    public static synchronized SkylabClient init(String name, Application application,
-                                                 String apiKey,
-                                                 SkylabConfig config) {
-        String normalizedName = Utils.normalizeInstanceName(name);
-        SkylabClientImpl client = INSTANCES.get(normalizedName);
+        String instanceName = config.getInstanceName();
+        SkylabClientImpl client = INSTANCES.get(instanceName);
         if (client == null) {
-            client = new SkylabClientImpl(normalizedName, application, apiKey, config,
-                    new SharedPrefsStorage(application, normalizedName), HTTP_CLIENT, EXECUTOR_SERVICE);
-            INSTANCES.put(normalizedName, client);
+            client = new SkylabClientImpl(application, apiKey, config,
+                    new SharedPrefsStorage(application, instanceName), HTTP_CLIENT, EXECUTOR_SERVICE);
+            INSTANCES.put(instanceName, client);
         }
         return client;
     }

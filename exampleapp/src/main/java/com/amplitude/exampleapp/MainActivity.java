@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         SkylabClient client = Skylab.getInstance();
         Future<SkylabClient> refetchFuture = client.refetchAll();
 
-        if (client.getVariant("demo-notifications").equals("true")) {
+        String variant = client.getVariant("demo-notifications");
+        if (variant.equals("true")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
         } else {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(false);

@@ -32,7 +32,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Default {@link SkylabClient} implementation. Use the {@link Skylab} class to initialize and access
+ * Default {@link SkylabClient} implementation. Use the {@link Skylab} class to initialize and
+ * access
  * instances.
  */
 public class SkylabClientImpl implements SkylabClient {
@@ -70,7 +71,8 @@ public class SkylabClientImpl implements SkylabClient {
         }
     };
 
-    SkylabClientImpl(String instanceName, Application application, String apiKey, SkylabConfig config, Storage storage
+    SkylabClientImpl(Application application, String apiKey,
+                     SkylabConfig config, Storage storage
             , OkHttpClient httpClient,
                      ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
@@ -78,7 +80,7 @@ public class SkylabClientImpl implements SkylabClient {
             throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
                     "apiKey.");
         }
-        this.instanceName = instanceName;
+        this.instanceName = config.getInstanceName();
         this.apiKey = apiKey;
         this.httpClient = httpClient;
         this.executorService = executorService;
@@ -238,8 +240,12 @@ public class SkylabClientImpl implements SkylabClient {
 
                             // add any flags that disappeared
                             for (String flag : oldValues.keySet()) {
-                                if (!result.has(flag) && !Skylab.DEFAULT_VARIANT.equals(oldValues.get(flag))) {
-                                    changed.put(flag, Skylab.DEFAULT_VARIANT);
+                                if (!result.has(flag)) {
+                                    if (config.getFallbackVariant() == null && oldValues.get(flag) != null) {
+                                        changed.put(flag, config.getFallbackVariant());
+                                    } else if (!config.getFallbackVariant().equals(oldValues.get(flag))) {
+                                        changed.put(flag, config.getFallbackVariant());
+                                    }
                                 }
                             }
 
@@ -278,14 +284,14 @@ public class SkylabClientImpl implements SkylabClient {
 
     /**
      * Fetches the variant for the given flagKey from local storage. If no such flag
-     * is found, returns Skylab.DEFAULT_VARIANT ("false").
+     * is found, returns the fallback variant set in the {@link SkylabConfig}.
      *
      * @param flagKey
      * @return
      */
     @Override
     public String getVariant(String flagKey) {
-        return getVariant(flagKey, Skylab.DEFAULT_VARIANT);
+        return getVariant(flagKey, config.getFallbackVariant());
     }
 
     /**

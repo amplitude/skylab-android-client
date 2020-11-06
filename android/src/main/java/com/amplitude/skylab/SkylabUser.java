@@ -57,6 +57,46 @@ public class SkylabUser {
         this.version = version;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public JSONObject getUserProperties() {
+        return userProperties;
+    }
+
     /**
      * Two contexts are equal if the JSON representations of the users are equal
      *

@@ -20,7 +20,7 @@ public class SharedPrefsStorage implements Storage {
 
     public SharedPrefsStorage(Context appContext, String instanceName) {
         this.appContext = appContext;
-        if (TextUtils.isEmpty(instanceName) || Skylab.DEFAULT_INSTANCE.equals(instanceName)) {
+        if (TextUtils.isEmpty(instanceName)) {
             this.sharedPrefsKey = SkylabConfig.SHARED_PREFS_STORAGE_NAME;
         } else {
             this.sharedPrefsKey = SkylabConfig.SHARED_PREFS_STORAGE_NAME + "-" + instanceName;
