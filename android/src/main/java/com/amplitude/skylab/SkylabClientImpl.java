@@ -3,6 +3,7 @@ package com.amplitude.skylab;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -199,11 +200,14 @@ public class SkylabClientImpl implements SkylabClient {
                 jsonContext.put(SkylabUser.ID, enrollmentId);
             }
             if (identityProvider != null) {
-                if (!jsonContext.has(SkylabUser.DEVICE_ID)) {
-                    jsonContext.put(SkylabUser.DEVICE_ID, identityProvider.getDeviceId());
+                String deviceId = identityProvider.getDeviceId();
+                if (!TextUtils.isEmpty(deviceId)) {
+                    jsonContext.put(SkylabUser.DEVICE_ID, deviceId);
+                    jsonContext.put(SkylabUser.ID, deviceId);
                 }
-                if (!jsonContext.has(SkylabUser.USER_ID)) {
-                    jsonContext.put(SkylabUser.USER_ID, identityProvider.getUserId());
+                String userId = identityProvider.getUserId();
+                if (!TextUtils.isEmpty(userId)) {
+                    jsonContext.put(SkylabUser.USER_ID, userId);
                 }
             }
         } catch (JSONException e) {
