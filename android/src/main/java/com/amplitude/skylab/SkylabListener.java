@@ -10,6 +10,6 @@ import java.util.Map;
  */
 public interface SkylabListener {
 
-    public void onVariantsChanged(SkylabUser skylabUser, Map<String, String> variants);
+    public void onVariantsChanged(SkylabUser skylabUser, Map<String, Variant> variants);
 
 }

@@ -36,7 +36,7 @@ public class SkylabConfig {
         /**
          * ""
          */
-        public static final String FALLBACK_VARIANT = "";
+        public static final Variant FALLBACK_VARIANT = new Variant("");
 
         /**
          * ""
@@ -46,13 +46,13 @@ public class SkylabConfig {
 
     private String serverUrl;
     private int pollIntervalSecs;
-    private String fallbackVariant;
+    private Variant fallbackVariant;
     private String instanceName;
 
     private SkylabConfig(
             String serverUrl,
             int pollIntervalSecs,
-            String fallbackVariant,
+            Variant fallbackVariant,
             String instanceName
     ) {
         this.serverUrl = serverUrl;
@@ -69,7 +69,7 @@ public class SkylabConfig {
         return pollIntervalSecs;
     }
 
-    public String getFallbackVariant() {
+    public Variant getFallbackVariant() {
         return fallbackVariant;
     }
 
@@ -84,7 +84,7 @@ public class SkylabConfig {
     public static class Builder {
         private String serverUrl = Defaults.SERVER_URL;
         private int pollIntervalSecs = Defaults.POLL_INTERVAL_SECS;
-        private String fallbackVariant = Defaults.FALLBACK_VARIANT;
+        private Variant fallbackVariant = Defaults.FALLBACK_VARIANT;
         private String instanceName = Defaults.INSTANCE_NAME;
 
         public SkylabConfig build() {
@@ -119,7 +119,7 @@ public class SkylabConfig {
          * @param fallbackVariant
          * @return
          */
-        public Builder setFallbackVariant(String fallbackVariant) {
+        public Builder setFallbackVariant(Variant fallbackVariant) {
             this.fallbackVariant = fallbackVariant;
             return this;
         }

@@ -49,7 +49,7 @@ public interface SkylabClient {
      * @param flagKey
      * @return
      */
-    String getVariant(String flagKey);
+    Variant getVariant(String flagKey);
 
     /**
      * Fetches the variant for the given flagKey from local storage.
@@ -58,7 +58,7 @@ public interface SkylabClient {
      * @param flagKey
      * @return
      */
-    String getVariant(String flagKey, String fallback);
+    Variant getVariant(String flagKey, Variant fallback);
 
     /**
      * Sets an identity provider that enriches the SkylabUser with a user_id and device_id

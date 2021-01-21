@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.amplitude.skylab.Skylab;
 import com.amplitude.skylab.SkylabClient;
+import com.amplitude.skylab.Variant;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         SkylabClient client = Skylab.getInstance();
         Future<SkylabClient> refetchFuture = client.refetchAll();
 
-        String variant = client.getVariant("demo-notifications");
-        if (variant.equals("true")) {
+        Variant variant = client.getVariant("demo-notifications");
+        if (variant.key.equals("true")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
         } else {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(false);

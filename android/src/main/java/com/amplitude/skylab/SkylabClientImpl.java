@@ -217,7 +217,7 @@ public class SkylabClientImpl implements SkylabClient {
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
         final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
         final HttpUrl url =
-                serverUrl.newBuilder().addPathSegments("sdk/variants/" + base64Encoded).build();
+                serverUrl.newBuilder().addPathSegments("sdk/vardata/" + base64Encoded).build();
         Log.d(Skylab.TAG,
                 "Requesting variants from " + url.toString() + " for user " + jsonContext.toString());
         Request request = new Request.Builder().url(url).addHeader("Authorization",
@@ -237,12 +237,12 @@ public class SkylabClientImpl implements SkylabClient {
                 try {
                     if (response.isSuccessful()) {
                         synchronized (STORAGE_LOCK) {
-                            Map<String, String> oldValues = storage.getAll();
+                            Map<String, Variant> oldValues = storage.getAll();
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
-                            Map<String, String> changed = new HashMap<>();
+                            Map<String, Variant> changed = new HashMap<>();
 
-                            // add any flags that disappeared
+                            // add any flags that disappeared from the latest response
                             for (String flag : oldValues.keySet()) {
                                 if (!result.has(flag)) {
                                     if (config.getFallbackVariant() == null && oldValues.get(flag) != null) {
@@ -256,9 +256,11 @@ public class SkylabClientImpl implements SkylabClient {
                             Iterator<String> flags = result.keys();
                             while (flags.hasNext()) {
                                 String flag = flags.next();
-                                String newValue = result.getString(flag);
+
+                                JSONObject variantJsonObj = result.getJSONObject(flag);
+                                Variant newValue = Variant.fromJsonObject(variantJsonObj);
                                 storage.put(flag, newValue);
-                                String oldValue = oldValues.get(flag);
+                                Variant oldValue = oldValues.get(flag);
                                 if (!newValue.equals(oldValue)) {
                                     changed.put(flag, newValue);
                                 }
@@ -294,7 +296,7 @@ public class SkylabClientImpl implements SkylabClient {
      * @return
      */
     @Override
-    public String getVariant(String flagKey) {
+    public Variant getVariant(String flagKey) {
         return getVariant(flagKey, config.getFallbackVariant());
     }
 
@@ -306,8 +308,8 @@ public class SkylabClientImpl implements SkylabClient {
      * @return
      */
     @Override
-    public String getVariant(String flagKey, String fallback) {
-        String variant;
+    public Variant getVariant(String flagKey, Variant fallback) {
+        Variant variant;
         synchronized (STORAGE_LOCK) {
             variant = storage.get(flagKey);
         }
@@ -331,7 +333,7 @@ public class SkylabClientImpl implements SkylabClient {
         return this;
     }
 
-    private void fireOnVariantReceived(SkylabUser skylabUser, Map<String, String> variants) {
+    private void fireOnVariantReceived(SkylabUser skylabUser, Map<String, Variant> variants) {
         if (this.skylabListener != null) {
             this.skylabListener.onVariantsChanged(skylabUser, variants);
         }
