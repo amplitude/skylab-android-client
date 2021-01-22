@@ -1,6 +1,7 @@
 package com.amplitude.exampleapp;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.amplitude.skylab.Skylab;
 import com.amplitude.skylab.SkylabClient;
@@ -14,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
         SkylabClient client = Skylab.getInstance();
         Future<SkylabClient> refetchFuture = client.refetchAll();
 
-        Variant variant = client.getVariant("demo-notifications");
-        if (variant.key.equals("true")) {
+        Variant variant = client.getVariant("android-demo");
+        if (variant.key.equals("on")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
+            TextView tv = (TextView)findViewById(R.id.text_home);
+            tv.setText(variant.payload.toString());
         } else {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(false);
         }

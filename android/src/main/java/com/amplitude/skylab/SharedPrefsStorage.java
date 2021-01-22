@@ -31,14 +31,13 @@ public class SharedPrefsStorage implements Storage {
     @Override
     public Variant put(String key, Variant value) {
         String oldValue = sharedPrefs.getString(key, null);
-        // TODO: Should we put a JSON string of Variant and read that out?
-        sharedPrefs.edit().putString(key, value.key).apply();
-        return new Variant(oldValue);
+        sharedPrefs.edit().putString(key, value.toJson()).apply();
+        return Variant.fromJson(oldValue);
     }
 
     @Override
     public Variant get(String key) {
-        return new Variant(sharedPrefs.getString(key, null));
+        return Variant.fromJson(sharedPrefs.getString(key, null));
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SharedPrefsStorage implements Storage {
         Map<String, Variant> all = new HashMap<>();
         for(Map.Entry<String,?> entry : sharedPrefs.getAll().entrySet()){
             if (entry.getValue() instanceof String) {
-                all.put(entry.getKey(), new Variant((String) entry.getValue()));
+                all.put(entry.getKey(), Variant.fromJson((String) entry.getValue()));
             }
         }
         return all;

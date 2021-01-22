@@ -47,6 +47,7 @@ afterEvaluate {
 dependencies {
     implementation 'com.amplitude:android-sdk:2.25.2'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 task docs(type: Javadoc) {

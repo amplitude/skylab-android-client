@@ -1,9 +1,13 @@
 package com.amplitude.skylab;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Variant {
+    private static final Gson gson = new Gson();
+
     public final String key;
     public final Object payload;
 
@@ -22,8 +26,22 @@ public class Variant {
         }
 
         String key = variantJsonObj.getString("key");
-        Object payload = variantJsonObj.get("payload");
+        Object payload = null;
+        if (variantJsonObj.has("payload")) {
+            payload = variantJsonObj.get("payload");
+        }
         return new Variant(key, payload);
+    }
+
+    public String toJson() {
+        return gson.toJson(this);
+    }
+
+    public static Variant fromJson(String json) {
+        if (json == null) {
+            return null;
+        }
+        return gson.fromJson(json, Variant.class);
     }
 
     /**
