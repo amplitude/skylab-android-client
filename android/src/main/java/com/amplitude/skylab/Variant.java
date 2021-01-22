@@ -1,13 +1,11 @@
 package com.amplitude.skylab;
 
-import com.google.gson.Gson;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Variant {
-    private static final Gson gson = new Gson();
-
     public final String key;
     public final Object payload;
 
@@ -34,14 +32,35 @@ public class Variant {
     }
 
     public String toJson() {
-        return gson.toJson(this);
+        // create a JSONObject and then serialize it
+        JSONObject jsonObj = new JSONObject();
+        try {
+            if (key != null) {
+                jsonObj.put("key", key);
+            }
+            if (payload != null) {
+                jsonObj.put("payload", payload);
+            }
+        } catch (JSONException e) {
+            Log.w(Skylab.TAG, "Error converting Variant to json string", e);
+        }
+
+        return jsonObj.toString();
     }
 
     public static Variant fromJson(String json) {
+        // deserialize into a JSONObject and then create a Variant
         if (json == null) {
             return null;
         }
-        return gson.fromJson(json, Variant.class);
+
+        try {
+            JSONObject jsonObj = new JSONObject(json);
+            return Variant.fromJsonObject(jsonObj);
+        } catch (JSONException e) {
+            // values persisted in older versions would throw a JSONException
+            return new Variant(json);
+        }
     }
 
     /**

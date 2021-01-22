@@ -15,7 +15,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
