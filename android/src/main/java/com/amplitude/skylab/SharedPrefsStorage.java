@@ -29,23 +29,23 @@ public class SharedPrefsStorage implements Storage {
     }
 
     @Override
-    public String put(String key, String value) {
+    public Variant put(String key, Variant value) {
         String oldValue = sharedPrefs.getString(key, null);
-        sharedPrefs.edit().putString(key, value).apply();
-        return oldValue;
+        sharedPrefs.edit().putString(key, value.toJson()).apply();
+        return Variant.fromJson(oldValue);
     }
 
     @Override
-    public String get(String key) {
-        return sharedPrefs.getString(key, null);
+    public Variant get(String key) {
+        return Variant.fromJson(sharedPrefs.getString(key, null));
     }
 
     @Override
-    public Map<String, String> getAll() {
-        Map<String, String> all = new HashMap<>();
+    public Map<String, Variant> getAll() {
+        Map<String, Variant> all = new HashMap<>();
         for(Map.Entry<String,?> entry : sharedPrefs.getAll().entrySet()){
             if (entry.getValue() instanceof String) {
-                all.put(entry.getKey(), (String) entry.getValue());
+                all.put(entry.getKey(), Variant.fromJson((String) entry.getValue()));
             }
         }
         return all;

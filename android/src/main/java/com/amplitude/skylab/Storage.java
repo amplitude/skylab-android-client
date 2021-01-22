@@ -4,12 +4,12 @@ import java.util.Map;
 
 public interface Storage {
 
-    public String put(String key, String value);
+    Variant put(String key, Variant variant);
 
-    public String get(String key);
+    Variant get(String key);
 
-    public Map<String, String> getAll();
+    Map<String, Variant> getAll();
 
-    public void clear();
+    void clear();
 
 }

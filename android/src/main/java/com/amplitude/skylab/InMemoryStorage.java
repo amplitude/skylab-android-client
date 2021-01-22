@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryStorage implements Storage {
 
-    private final Map<String, String> data = new ConcurrentHashMap<>();
+    private final Map<String, Variant> data = new ConcurrentHashMap<>();
 
     @Override
-    public String put(String key, String value) {
+    public Variant put(String key, Variant value) {
         if (key != null) {
             return data.put(key, value);
         }
@@ -17,7 +17,7 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public String get(String key) {
+    public Variant get(String key) {
         if (key != null) {
             return data.get(key);
         }
@@ -25,7 +25,7 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Variant> getAll() {
         return new HashMap<>(data);
     }
 

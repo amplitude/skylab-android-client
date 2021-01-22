@@ -35,5 +35,4 @@ public class ExampleApplication extends Application {
         client.start(skylabUser);
     }
 
-
 }
