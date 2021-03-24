@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Future<SkylabClient> refetchFuture = client.refetchAll();
 
         Variant variant = client.getVariant("android-demo");
-        if (variant.key.equals("on")) {
+        if (variant.value.equals("on")) {
             navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
             TextView tv = (TextView)findViewById(R.id.text_home);
             tv.setText(variant.payload.toString());

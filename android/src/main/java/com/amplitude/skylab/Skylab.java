@@ -11,11 +11,11 @@ import java.util.concurrent.ThreadFactory;
 import okhttp3.OkHttpClient;
 
 /**
- * Factory class for Skylab. Manages a pool of singleton instances of SkylabClient identified by
- * name. SkylabClient names are normalized to be lowercase. The name "$default_instance" is
- * reserved for the default SkylabClient instance, and is provided for convenience.
+ * Factory class for Skylab. Manages a pool of singleton instances of {@link SkylabClient} identified by
+ * name. {@link SkylabClient} names are normalized to be lowercase. The name "$default_instance" is
+ * reserved for the default {@link SkylabClient} instance, and is provided for convenience.
  * <p>
- * All SkylabClients share the same executor service and http client.
+ * All {@link SkylabClient} share the same executor service and http client.
  */
 public class Skylab {
 
@@ -32,20 +32,20 @@ public class Skylab {
             new ScheduledThreadPoolExecutor(0
             , DAEMON_THREAD_FACTORY);
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
-    private static final Map<String, SkylabClientImpl> INSTANCES = new ConcurrentHashMap<String,
-            SkylabClientImpl>();
+    private static final Map<String, DefaultSkylabClient> INSTANCES = new ConcurrentHashMap<String,
+            DefaultSkylabClient>();
 
     // Public API
 
     /**
-     * Returns the default SkylabClient instance
+     * Returns the default {@link SkylabClient} instance
      */
     public static SkylabClient getInstance() {
         return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
     }
 
     /**
-     * Returns the SkylabClient instance associated with the provided name. If no SkylabClient
+     * Returns the {@link SkylabClient} instance associated with the provided name. If no Client
      * was initialized with the given name, returns null.
      */
     public static SkylabClient getInstance(String name) {
@@ -54,20 +54,20 @@ public class Skylab {
     }
 
     /**
-     * Initializes a SkylabClient with the provided api key and {@link SkylabConfig}.
-     * If a SkylabClient already exists with the instanceName set by the {@link SkylabConfig},
+     * Initializes a {@link SkylabClient} with the provided api key and {@link SkylabConfig}.
+     * If a {@link SkylabClient} already exists with the instanceName set by the {@link SkylabConfig},
      * returns that instance instead.
      *
      * @param application The Android Application context
-     * @param apiKey  The Client key. This can be found in the Skylab settings and should not be null or empty.
+     * @param apiKey  The API key. This can be found in the Skylab settings and should not be null or empty.
      * @param config see {@link SkylabConfig} for configuration options
      */
     public static synchronized SkylabClient init(Application application,
                                                  String apiKey, SkylabConfig config) {
         String instanceName = config.getInstanceName();
-        SkylabClientImpl client = INSTANCES.get(instanceName);
+        DefaultSkylabClient client = INSTANCES.get(instanceName);
         if (client == null) {
-            client = new SkylabClientImpl(application, apiKey, config,
+            client = new DefaultSkylabClient(application, apiKey, config,
                     new SharedPrefsStorage(application, instanceName), HTTP_CLIENT, EXECUTOR_SERVICE);
             INSTANCES.put(instanceName, client);
         }
@@ -75,7 +75,7 @@ public class Skylab {
     }
 
     /**
-     * Shuts down all SkylabClient instances.
+     * Shuts down all {@link SkylabClient} instances.
      */
     public static void shutdown() {
         HTTP_CLIENT.dispatcher().executorService().shutdown();

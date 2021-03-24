@@ -37,7 +37,9 @@ import okhttp3.Response;
  * access
  * instances.
  */
-public class SkylabClientImpl implements SkylabClient {
+public class DefaultSkylabClient implements SkylabClient {
+    public static final String LIBRARY = "skylab-android/" + BuildConfig.VERSION_NAME;
+
     private static final int BASE_64_DEFAULT_FLAGS =
             Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE;
     static final Object STORAGE_LOCK = new Object();
@@ -51,7 +53,7 @@ public class SkylabClientImpl implements SkylabClient {
 
     SkylabUser skylabUser;
     SkylabListener skylabListener;
-    IdentityProvider identityProvider;
+    ContextProvider contextProvider;
 
     Storage storage;
     OkHttpClient httpClient;
@@ -72,10 +74,10 @@ public class SkylabClientImpl implements SkylabClient {
         }
     };
 
-    SkylabClientImpl(Application application, String apiKey,
-                     SkylabConfig config, Storage storage
+    DefaultSkylabClient(Application application, String apiKey,
+                        SkylabConfig config, Storage storage
             , OkHttpClient httpClient,
-                     ScheduledThreadPoolExecutor executorService) {
+                        ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             // guarantee that apiKey exists
             throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
@@ -126,10 +128,14 @@ public class SkylabClientImpl implements SkylabClient {
         enrollmentId = sharedPreferences.getString(SkylabConfig.ENROLLMENT_ID_KEY, null);
         if (enrollmentId == null) {
             Log.i(Skylab.TAG, "Creating new id for enrollment");
-            enrollmentId = uuidToBase36(UUID.randomUUID());
+            enrollmentId = generateEnrollmentId();
             sharedPreferences.edit().putString(SkylabConfig.ENROLLMENT_ID_KEY, enrollmentId).apply();
         }
         return enrollmentId;
+    }
+
+    private static String generateEnrollmentId() {
+        return uuidToBase36(UUID.randomUUID());
     }
 
     private static String uuidToBase36(UUID uuid) {
@@ -191,28 +197,7 @@ public class SkylabClientImpl implements SkylabClient {
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
-        final JSONObject jsonContext = (skylabUser != null) ? skylabUser.toJSONObject() :
-                new JSONObject();
-        try {
-            String skylabContextId = jsonContext.optString(SkylabUser.ID);
-            Log.i(Skylab.TAG, skylabContextId);
-            if (skylabContextId == null || skylabContextId.equals("")) {
-                jsonContext.put(SkylabUser.ID, enrollmentId);
-            }
-            if (identityProvider != null) {
-                String deviceId = identityProvider.getDeviceId();
-                if (!TextUtils.isEmpty(deviceId)) {
-                    jsonContext.put(SkylabUser.DEVICE_ID, deviceId);
-                    jsonContext.put(SkylabUser.ID, deviceId);
-                }
-                String userId = identityProvider.getUserId();
-                if (!TextUtils.isEmpty(userId)) {
-                    jsonContext.put(SkylabUser.USER_ID, userId);
-                }
-            }
-        } catch (JSONException e) {
-            Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
-        }
+        final JSONObject jsonContext = addContext(skylabUser);
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
         final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
@@ -236,23 +221,10 @@ public class SkylabClientImpl implements SkylabClient {
                 String responseString = response.body().string();
                 try {
                     if (response.isSuccessful()) {
+                        Map<String, Variant> newValues = new HashMap<>();
                         synchronized (STORAGE_LOCK) {
-                            Map<String, Variant> oldValues = storage.getAll();
                             storage.clear();
                             JSONObject result = new JSONObject(responseString);
-                            Map<String, Variant> changed = new HashMap<>();
-
-                            // add any flags that disappeared from the latest response
-                            for (String flag : oldValues.keySet()) {
-                                if (!result.has(flag)) {
-                                    if (config.getFallbackVariant() == null && oldValues.get(flag) != null) {
-                                        changed.put(flag, config.getFallbackVariant());
-                                    } else if (!config.getFallbackVariant().equals(oldValues.get(flag))) {
-                                        changed.put(flag, config.getFallbackVariant());
-                                    }
-                                }
-                            }
-
                             Iterator<String> flags = result.keys();
                             while (flags.hasNext()) {
                                 String flag = flags.next();
@@ -260,13 +232,10 @@ public class SkylabClientImpl implements SkylabClient {
                                 JSONObject variantJsonObj = result.getJSONObject(flag);
                                 Variant newValue = Variant.fromJsonObject(variantJsonObj);
                                 storage.put(flag, newValue);
-                                Variant oldValue = oldValues.get(flag);
-                                if (!newValue.equals(oldValue)) {
-                                    changed.put(flag, newValue);
-                                }
+                                newValues.put(flag, newValue);
                             }
-                            fireOnVariantReceived(skylabUser, changed);
                         }
+                        fireOnVariantsReceived(skylabUser, newValues);
                     } else {
                         Log.w(Skylab.TAG, responseString);
                     }
@@ -279,13 +248,50 @@ public class SkylabClientImpl implements SkylabClient {
                 } finally {
                     response.close();
                 }
-                future.complete(SkylabClientImpl.this);
+                future.complete(DefaultSkylabClient.this);
                 long end = System.nanoTime();
                 Log.d(Skylab.TAG, String.format("Fetched all: %s for user %s in %.3f ms",
                         responseString, jsonContext.toString(), (end - start) / 1000000.0));
             }
         });
         return future;
+    }
+
+
+    private JSONObject addContext(SkylabUser skylabUser) {
+        JSONObject jsonContext = new JSONObject();
+        try {
+            jsonContext.put(SkylabUser.DEVICE_ID, enrollmentId);
+            // Add in context provider fields
+            if (contextProvider != null) {
+                String deviceId = contextProvider.getDeviceId();
+                if (!TextUtils.isEmpty(deviceId)) {
+                    jsonContext.put(SkylabUser.DEVICE_ID, deviceId);
+                }
+                String userId = contextProvider.getUserId();
+                if (!TextUtils.isEmpty(userId)) {
+                    jsonContext.put(SkylabUser.USER_ID, userId);
+                }
+                jsonContext.put(SkylabUser.PLATFORM, contextProvider.getPlatform());
+                jsonContext.put(SkylabUser.VERSION, contextProvider.getVersion());
+                jsonContext.put(SkylabUser.LANGUAGE, contextProvider.getLanguage());
+                jsonContext.put(SkylabUser.OS, contextProvider.getOs());
+                jsonContext.put(SkylabUser.DEVICE_BRAND, contextProvider.getBrand());
+                jsonContext.put(SkylabUser.DEVICE_MANUFACTURER, contextProvider.getManufacturer());
+                jsonContext.put(SkylabUser.DEVICE_MODEL, contextProvider.getModel());
+                jsonContext.put(SkylabUser.CARRIER, contextProvider.getCarrier());
+            }
+            jsonContext.put(SkylabUser.LIBRARY, LIBRARY);
+            // Add in explicitly provided SkylabUser fields
+            JSONObject skylabUserJson = skylabUser.toJSONObject();
+            for (Iterator<String> it = skylabUserJson.keys(); it.hasNext(); ) {
+                String key = it.next();
+                jsonContext.put(key, skylabUserJson.get(key));
+            }
+        } catch (JSONException e) {
+            Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
+        }
+        return jsonContext;
     }
 
     /**
@@ -321,9 +327,19 @@ public class SkylabClientImpl implements SkylabClient {
         return variant;
     }
 
+    /**
+     * Fetches all variants from local storage.
+     * @return
+     */
+    public Map<String, Variant> getVariants() {
+        synchronized (STORAGE_LOCK) {
+            return storage.getAll();
+        }
+    }
+
     @Override
-    public SkylabClient setIdentityProvider(IdentityProvider provider) {
-        this.identityProvider = provider;
+    public SkylabClient setContextProvider(ContextProvider provider) {
+        this.contextProvider = provider;
         return this;
     }
 
@@ -333,7 +349,7 @@ public class SkylabClientImpl implements SkylabClient {
         return this;
     }
 
-    private void fireOnVariantReceived(SkylabUser skylabUser, Map<String, Variant> variants) {
+    private void fireOnVariantsReceived(SkylabUser skylabUser, Map<String, Variant> variants) {
         if (this.skylabListener != null) {
             this.skylabListener.onVariantsChanged(skylabUser, variants);
         }

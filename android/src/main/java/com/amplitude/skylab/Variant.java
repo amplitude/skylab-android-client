@@ -6,37 +6,50 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Variant {
-    public final String key;
+    public final String value;
     public final Object payload;
 
-    public Variant(String key) {
-        this(key, null);
+    public Variant(String value) {
+        this(value, null);
     }
 
-    public Variant(String key, Object payload) {
-        this.key = key;
+    public Variant(String value, Object payload) {
+        this.value = value;
         this.payload = payload;
     }
 
+    public String value() {
+        return this.value;
+    }
+
+    public Object payload() {
+        return this.payload;
+    }
+
     public static Variant fromJsonObject(JSONObject variantJsonObj) throws JSONException {
-        if (!variantJsonObj.has("key")) {
+        String value;
+
+        if (variantJsonObj.has("value")) {
+            value = variantJsonObj.getString("value");
+        } else if (variantJsonObj.has("key")) {
+            value = variantJsonObj.getString("key");
+        } else {
             return null;
         }
 
-        String key = variantJsonObj.getString("key");
         Object payload = null;
         if (variantJsonObj.has("payload")) {
             payload = variantJsonObj.get("payload");
         }
-        return new Variant(key, payload);
+        return new Variant(value, payload);
     }
 
     public String toJson() {
         // create a JSONObject and then serialize it
         JSONObject jsonObj = new JSONObject();
         try {
-            if (key != null) {
-                jsonObj.put("key", key);
+            if (value != null) {
+                jsonObj.put("value", value);
             }
             if (payload != null) {
                 jsonObj.put("payload", payload);
@@ -70,7 +83,7 @@ public class Variant {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
 
@@ -86,10 +99,10 @@ public class Variant {
         if (getClass() != obj.getClass())
             return false;
         Variant other = (Variant) obj;
-        if (key == null) {
-            if (other.key != null)
+        if (value == null) {
+            if (other.value != null)
                 return false;
-        } else if (!key.equals(other.key))
+        } else if (!value.equals(other.value))
             return false;
         return true;
     }

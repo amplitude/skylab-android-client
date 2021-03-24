@@ -4,12 +4,15 @@ import android.app.Application;
 
 import com.amplitude.api.Amplitude;
 import com.amplitude.api.AmplitudeClient;
-import com.amplitude.api.AmplitudeIdentityProvider;
-import com.amplitude.api.AmplitudeSkylabListener;
+import com.amplitude.api.AmplitudeContextProvider;
 import com.amplitude.skylab.Skylab;
 import com.amplitude.skylab.SkylabClient;
 import com.amplitude.skylab.SkylabConfig;
+import com.amplitude.skylab.SkylabListener;
 import com.amplitude.skylab.SkylabUser;
+import com.amplitude.skylab.Variant;
+
+import java.util.Map;
 
 public class ExampleApplication extends Application {
     @Override
@@ -23,14 +26,16 @@ public class ExampleApplication extends Application {
         AmplitudeClient amplitude = Amplitude.getInstance();
         amplitude.initialize(this, "a6dd847b9d2f03c816d4f3f8458cdc1d");
         amplitude.setUserId("test-user");
-        client.setListener(new AmplitudeSkylabListener(amplitude));
-        client.setIdentityProvider(new AmplitudeIdentityProvider(amplitude));
+        client.setListener(new SkylabListener() {
+            @Override
+            public void onVariantsChanged(SkylabUser skylabUser, Map<String, Variant> variants) {
+                // handle variants changed
+            }
+        });
+        client.setContextProvider(new AmplitudeContextProvider(amplitude));
         SkylabUser skylabUser =
                 SkylabUser.builder().
                         setUserProperty("group", "Group 1").
-                        withDetectedLanguage().
-                        withDetectedPlatform().
-                        withDetectedVersion(this).
                         build();
         client.start(skylabUser);
     }

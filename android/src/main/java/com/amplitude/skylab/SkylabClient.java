@@ -1,5 +1,6 @@
 package com.amplitude.skylab;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
@@ -8,8 +9,8 @@ import java.util.concurrent.Future;
 public interface SkylabClient {
 
     /**
-     * Fetches evaluations with the given SkylabUser. If skylabUser is null, will fetch with an empty
-     * SkylabUser.
+     * Fetches evaluations with the given {@link SkylabUser}. If skylabUser is null, will fetch with an empty
+     * {@link SkylabUser}.
      *
      * @return A future that resolves when the evaluations have been returned by the server
      */
@@ -24,7 +25,7 @@ public interface SkylabClient {
     void start(SkylabUser skylabUser, long timeoutMs);
 
     /**
-     * Sets the evaluation SkylabUser. Clears the local cache if the SkylabUser has changed and
+     * Sets the evaluation {@link SkylabUser}. Clears the local cache if the {@link SkylabUser} has changed and
      * refetches evaluations.
      *
      * @param skylabUser
@@ -33,7 +34,7 @@ public interface SkylabClient {
     Future<SkylabClient> setUser(SkylabUser skylabUser);
 
     /**
-     * Asynchronously refetches evaluations with the stored SkylabUser.
+     * Asynchronously refetches evaluations with the stored {@link SkylabUser}.
      *
      * @return A future that resolves when the evaluations have been returned by the server
      */
@@ -44,7 +45,7 @@ public interface SkylabClient {
     SkylabClient stopPolling();
 
     /**
-     * Fetches the variant for the given flagKey from local storage
+     * Fetches the {@link Variant} for the given flagKey from local storage
      *
      * @param flagKey
      * @return
@@ -52,7 +53,7 @@ public interface SkylabClient {
     Variant getVariant(String flagKey);
 
     /**
-     * Fetches the variant for the given flagKey from local storage.
+     * Fetches the {@link Variant} for the given flagKey from local storage.
      * If the variant has not been fetched before, returns fallback.
      *
      * @param flagKey
@@ -61,11 +62,16 @@ public interface SkylabClient {
     Variant getVariant(String flagKey, Variant fallback);
 
     /**
-     * Sets an identity provider that enriches the SkylabUser with a user_id and device_id
-     * when fetching flags. The enrichment happens at the time a new network request is made.
-     * This is used to connect Skylab to Amplitude identities. See {@link IdentityProvider}.
+     * Fetches all {@link Variant}s in a Map of flagKey to Variant.
      */
-    SkylabClient setIdentityProvider(IdentityProvider provider);
+    Map<String, Variant> getVariants();
+
+    /**
+     * Sets an identity provider that enriches the {@link SkylabUser} with a user_id and device_id
+     * when fetching flags. The enrichment happens at the time a new network request is made.
+     * This is used to connect Skylab to Amplitude identities. See {@link ContextProvider}.
+     */
+    SkylabClient setContextProvider(ContextProvider provider);
 
     /**
      * Sets a listener for enrollment events. See {@link SkylabListener}

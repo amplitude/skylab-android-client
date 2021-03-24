@@ -45,7 +45,7 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation 'com.amplitude:android-sdk:2.25.2'
+    implementation 'com.amplitude:android-sdk:2.26.1'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 }
 
@@ -53,6 +53,7 @@ task docs(type: Javadoc) {
     description "Generates Javadoc"
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += project.files('build/generated/source/buildConfig/release')
     options.docTitle = "Skylab Android SDK v$version API"
     options.windowTitle = "Skylab Android SDK v$version API"
     destinationDir = file("../docs/")
