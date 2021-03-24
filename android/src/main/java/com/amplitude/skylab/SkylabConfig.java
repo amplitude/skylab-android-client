@@ -25,9 +25,9 @@ public class SkylabConfig {
     public static final class Defaults {
 
         /**
-         * ""
+         * null
          */
-        public static final Variant FALLBACK_VARIANT = new Variant("");
+        public static final Variant FALLBACK_VARIANT = new Variant(null);
 
         /**
          * ""

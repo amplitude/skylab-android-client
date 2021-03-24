@@ -37,10 +37,18 @@ public class VariantTest {
 
     @Test
     public void toJson() throws JSONException {
-        Variant variant = new Variant("value");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("value", "value");
-        Assert.assertEquals(jsonObject.toString(), variant.toJson());
+        {
+            Variant variant = new Variant("value");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("value", "value");
+            Assert.assertEquals(jsonObject.toString(), variant.toJson());
+        }
+
+        {
+            Variant variant = new Variant(null);
+            Assert.assertEquals("{}", variant.toJson());
+            Assert.assertNull(Variant.fromJson(variant.toJson()).value());
+        }
     }
 
     @Test
