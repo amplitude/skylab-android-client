@@ -34,7 +34,7 @@ public class Variant {
         } else if (variantJsonObj.has("key")) {
             value = variantJsonObj.getString("key");
         } else {
-            return null;
+            return new Variant(null);
         }
 
         Object payload = null;
@@ -64,7 +64,7 @@ public class Variant {
     public static Variant fromJson(String json) {
         // deserialize into a JSONObject and then create a Variant
         if (json == null) {
-            return null;
+            return new Variant(null, null);
         }
 
         try {
