@@ -319,7 +319,7 @@ public class DefaultSkylabClient implements SkylabClient {
         synchronized (STORAGE_LOCK) {
             variant = storage.get(flagKey);
         }
-        if (variant == null) {
+        if (variant == null || variant.value() == null) {
             variant = fallback;
             Log.d(Skylab.TAG, String.format("Variant for %s not found, returning fallback variant" +
                     " %s", flagKey, variant));
