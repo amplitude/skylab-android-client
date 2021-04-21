@@ -150,7 +150,7 @@ public class DefaultSkylabClient implements SkylabClient {
      */
     @Override
     public Future<SkylabClient> setUser(SkylabUser skylabUser) {
-        if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
+        if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && !this.skylabUser.equals(skylabUser))) {
             final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
             future.complete(this);
             return future;
@@ -159,6 +159,45 @@ public class DefaultSkylabClient implements SkylabClient {
             storage.clear();
             return executorService.submit(fetchAllCallable);
         }
+    }
+
+    /**
+     * See {@link SkylabClient#getUser}
+     * @return
+     */
+    @Override
+    public SkylabUser getUser() {
+        return this.skylabUser;
+    }
+
+    /**
+     * See {@link SkylabClient#getUserWithContext}
+     * @return
+     */
+    @Override
+    public SkylabUser getUserWithContext() {
+        SkylabUser.Builder builder = SkylabUser.builder();
+        if (contextProvider != null) {
+            String deviceId = contextProvider.getDeviceId();
+            if (!TextUtils.isEmpty(deviceId)) {
+                builder.setDeviceId(deviceId);
+            }
+            String userId = contextProvider.getUserId();
+            if (!TextUtils.isEmpty(userId)) {
+                builder.setUserId(userId);
+            }
+            builder.setPlatform(contextProvider.getPlatform());
+            builder.setVersion(contextProvider.getVersion());
+            builder.setLanguage(contextProvider.getLanguage());
+            builder.setOs(contextProvider.getOs());
+            builder.setDeviceBrand(contextProvider.getBrand());
+            builder.setDeviceManufacturer(contextProvider.getManufacturer());
+            builder.setDeviceModel(contextProvider.getModel());
+            builder.setCarrier(contextProvider.getCarrier());
+        }
+        builder.setLibrary(LIBRARY);
+        builder.copyUser(this.skylabUser);
+        return builder.build();
     }
 
     @Override
@@ -259,39 +298,7 @@ public class DefaultSkylabClient implements SkylabClient {
 
 
     private JSONObject addContext(SkylabUser skylabUser) {
-        JSONObject jsonContext = new JSONObject();
-        try {
-            jsonContext.put(SkylabUser.DEVICE_ID, enrollmentId);
-            // Add in context provider fields
-            if (contextProvider != null) {
-                String deviceId = contextProvider.getDeviceId();
-                if (!TextUtils.isEmpty(deviceId)) {
-                    jsonContext.put(SkylabUser.DEVICE_ID, deviceId);
-                }
-                String userId = contextProvider.getUserId();
-                if (!TextUtils.isEmpty(userId)) {
-                    jsonContext.put(SkylabUser.USER_ID, userId);
-                }
-                jsonContext.put(SkylabUser.PLATFORM, contextProvider.getPlatform());
-                jsonContext.put(SkylabUser.VERSION, contextProvider.getVersion());
-                jsonContext.put(SkylabUser.LANGUAGE, contextProvider.getLanguage());
-                jsonContext.put(SkylabUser.OS, contextProvider.getOs());
-                jsonContext.put(SkylabUser.DEVICE_BRAND, contextProvider.getBrand());
-                jsonContext.put(SkylabUser.DEVICE_MANUFACTURER, contextProvider.getManufacturer());
-                jsonContext.put(SkylabUser.DEVICE_MODEL, contextProvider.getModel());
-                jsonContext.put(SkylabUser.CARRIER, contextProvider.getCarrier());
-            }
-            jsonContext.put(SkylabUser.LIBRARY, LIBRARY);
-            // Add in explicitly provided SkylabUser fields
-            JSONObject skylabUserJson = skylabUser.toJSONObject();
-            for (Iterator<String> it = skylabUserJson.keys(); it.hasNext(); ) {
-                String key = it.next();
-                jsonContext.put(key, skylabUserJson.get(key));
-            }
-        } catch (JSONException e) {
-            Log.w(Skylab.TAG, "Error converting SkylabUser to JSONObject", e);
-        }
-        return jsonContext;
+        return getUserWithContext().toJSONObject();
     }
 
     /**

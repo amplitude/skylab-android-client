@@ -26,6 +26,14 @@ public class Variant {
         return this.payload;
     }
 
+    @Override
+    public String toString() {
+        return "Variant{" +
+                "value='" + value + '\'' +
+                ", payload=" + payload +
+                '}';
+    }
+
     public static Variant fromJsonObject(JSONObject variantJsonObj) throws JSONException {
         String value;
 

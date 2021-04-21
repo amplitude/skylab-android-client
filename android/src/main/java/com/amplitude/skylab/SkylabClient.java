@@ -34,6 +34,16 @@ public interface SkylabClient {
     Future<SkylabClient> setUser(SkylabUser skylabUser);
 
     /**
+     * @return The current SkylabUser, *without* any properties added by the ContextProvider
+     */
+    SkylabUser getUser();
+
+    /**
+     * @return The current SkylabUser, *including* properties added by thee ContextProvider
+     */
+    SkylabUser getUserWithContext();
+
+    /**
      * Asynchronously refetches evaluations with the stored {@link SkylabUser}.
      *
      * @return A future that resolves when the evaluations have been returned by the server

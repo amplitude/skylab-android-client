@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,17 +39,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        SkylabClient client = Skylab.getInstance();
-        Future<SkylabClient> refetchFuture = client.refetchAll();
-
-        Variant variant = client.getVariant("android-demo");
-        if ("on".equals(variant.value)) {
-            navView.getMenu().findItem(R.id.navigation_notifications).setVisible(true);
-            TextView tv = (TextView)findViewById(R.id.text_home);
-            tv.setText(variant.payload.toString());
-        } else {
-            navView.getMenu().findItem(R.id.navigation_notifications).setVisible(false);
-        }
+        Future<SkylabClient> refetchFuture = Skylab.getInstance().refetchAll();
+        TextView tv = (TextView)findViewById(R.id.text_home);
+        new Thread(() -> {
+            try {
+                final SkylabClient client = refetchFuture.get();
+                runOnUiThread(() -> {
+                    Variant variant = client.getVariant("android-demo");
+                    tv.setText("Variant: " + variant.toJson() +
+                            "\nUser: " + client.getUser().toJSONObject().toString());
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override

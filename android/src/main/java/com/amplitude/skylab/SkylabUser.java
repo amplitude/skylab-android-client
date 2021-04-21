@@ -24,7 +24,7 @@ public class SkylabUser {
     public static final String DEVICE_ID = "device_id";
     public static final String COUNTRY = "country";
     public static final String REGION = "region";
-    public static final String DMA = "region";
+    public static final String DMA = "dma";
     public static final String CITY = "city";
     public static final String LANGUAGE = "language";
     public static final String PLATFORM = "platform";
@@ -188,8 +188,32 @@ public class SkylabUser {
             return false;
         if (carrier != null ? !carrier.equals(that.carrier) : that.carrier != null) return false;
         if (library != null ? !library.equals(that.library) : that.library != null) return false;
-        return userProperties != null ? userProperties.equals(that.userProperties) :
+        return userProperties != null ? userProperties.toString().equals(that.userProperties.toString()) :
                 that.userProperties == null;
+    }
+
+    @Override
+    public String toString() {
+        return "SkylabUser{" +
+                "userId='" + userId + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", country='" + country + '\'' +
+                ", region='" + region + '\'' +
+                ", dma='" + dma + '\'' +
+                ", city='" + city + '\'' +
+                ", language='" + language + '\'' +
+                ", platform='" + platform + '\'' +
+                ", version='" + version + '\'' +
+                ", os='" + os + '\'' +
+                ", deviceFamily='" + deviceFamily + '\'' +
+                ", deviceType='" + deviceType + '\'' +
+                ", deviceManufacturer='" + deviceManufacturer + '\'' +
+                ", deviceBrand='" + deviceBrand + '\'' +
+                ", deviceModel='" + deviceModel + '\'' +
+                ", carrier='" + carrier + '\'' +
+                ", library='" + library + '\'' +
+                ", userProperties=" + userProperties +
+                '}';
     }
 
     @Override
@@ -374,6 +398,71 @@ public class SkylabUser {
                 this.userProperties.put(property, value);
             } catch (JSONException e) {
                 Log.e(Skylab.TAG, e.toString());
+            }
+            return this;
+        }
+
+        /**
+         * Performs a shallow clone of an existing SkylabUser into the builder,
+         * ignoring nulls. This will overwrite all user properties with the copied
+         * user user properties if the copied user contains user properties.
+         * @param user
+         * @return
+         */
+        public Builder copyUser(SkylabUser user) {
+            if (user.userId != null) {
+                setUserId(user.userId);
+            }
+            if (user.deviceId != null) {
+                setDeviceId(user.deviceId);
+            }
+            if (user.country != null) {
+                setCountry(user.country);
+            }
+            if (user.region != null) {
+                setRegion(user.region);
+            }
+            if (user.region != null) {
+                setCity(user.city);
+            }
+            if (user.language != null) {
+                setLanguage(user.language);
+            }
+            if (user.platform != null) {
+                setPlatform(user.platform);
+            }
+            if (user.version != null) {
+                setVersion(user.version);
+            }
+            if (user.os != null) {
+                setOs(user.os);
+            }
+            if (user.dma != null) {
+                setDma(user.dma);
+            }
+            if (user.deviceFamily != null) {
+                setDeviceFamily(user.deviceFamily);
+            }
+            if (user.deviceType != null) {
+                setDeviceType(user.deviceType);
+            }
+            if (user.deviceManufacturer != null) {
+                setDeviceManufacturer(user.deviceManufacturer);
+            }
+            if (user.deviceBrand != null) {
+                setDeviceBrand(user.deviceBrand);
+            }
+            if (user.deviceModel != null) {
+                setDeviceModel(user.deviceModel);
+            }
+            if (user.carrier != null) {
+                setCarrier(user.carrier);
+            }
+            if (user.library != null) {
+                setLibrary(user.library);
+            }
+            if (user.userProperties != null) {
+                setUserProperties(user.userProperties);
             }
             return this;
         }
