@@ -75,8 +75,8 @@ public class DefaultSkylabClient implements SkylabClient {
     };
 
     DefaultSkylabClient(Application application, String apiKey,
-                        SkylabConfig config, Storage storage
-            , OkHttpClient httpClient,
+                        SkylabConfig config, Storage storage,
+                        OkHttpClient httpClient,
                         ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             // guarantee that apiKey exists
@@ -223,7 +223,6 @@ public class DefaultSkylabClient implements SkylabClient {
     }
 
     public Future<SkylabClient> refetchAll() {
-
         return executorService.submit(fetchAllCallable);
     }
 
@@ -236,7 +235,11 @@ public class DefaultSkylabClient implements SkylabClient {
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
-        final JSONObject jsonContext = addContext(skylabUser);
+        final SkylabUser user = getUserWithContext();
+        if (user.userId == null && user.deviceId == null) {
+            Log.w(Skylab.TAG, "user id and device id are null; amplitude will not be able to resolve identity");
+        }
+        final JSONObject jsonContext = user.toJSONObject();
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
         final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
@@ -294,11 +297,6 @@ public class DefaultSkylabClient implements SkylabClient {
             }
         });
         return future;
-    }
-
-
-    private JSONObject addContext(SkylabUser skylabUser) {
-        return getUserWithContext().toJSONObject();
     }
 
     /**
