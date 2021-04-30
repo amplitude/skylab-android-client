@@ -240,7 +240,7 @@ public class DefaultSkylabClient implements SkylabClient {
         if (user.userId == null && user.deviceId == null) {
             Log.w(Skylab.TAG, "user id and device id are null; amplitude will not be able to resolve identity");
         }
-        final JSONObject jsonContext = addContext(skylabUser);
+        final JSONObject jsonContext = user.toJSONObject();
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
         final String base64Encoded = Base64.encodeToString(srcData, BASE_64_DEFAULT_FLAGS);
