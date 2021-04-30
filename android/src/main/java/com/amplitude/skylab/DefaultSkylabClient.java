@@ -75,8 +75,8 @@ public class DefaultSkylabClient implements SkylabClient {
     };
 
     DefaultSkylabClient(Application application, String apiKey,
-                        SkylabConfig config, Storage storage
-            , OkHttpClient httpClient,
+                        SkylabConfig config, Storage storage,
+                        OkHttpClient httpClient,
                         ScheduledThreadPoolExecutor executorService) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             // guarantee that apiKey exists
@@ -223,7 +223,6 @@ public class DefaultSkylabClient implements SkylabClient {
     }
 
     public Future<SkylabClient> refetchAll() {
-
         return executorService.submit(fetchAllCallable);
     }
 
@@ -298,11 +297,6 @@ public class DefaultSkylabClient implements SkylabClient {
             }
         });
         return future;
-    }
-
-
-    private JSONObject addContext(SkylabUser skylabUser) {
-        return getUserWithContext().toJSONObject();
     }
 
     /**
