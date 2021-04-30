@@ -236,6 +236,10 @@ public class DefaultSkylabClient implements SkylabClient {
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
+        final SkylabUser user = getUserWithContext();
+        if (user.userId == null && user.deviceId == null) {
+            Log.w(Skylab.TAG, "user id and device id are null; amplitude will not be able to resolve identity");
+        }
         final JSONObject jsonContext = addContext(skylabUser);
         final String jsonString = jsonContext.toString();
         final byte[] srcData = jsonString.getBytes(Charset.forName("UTF-8"));
