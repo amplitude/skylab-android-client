@@ -84,7 +84,7 @@ public interface SkylabClient {
     SkylabClient setContextProvider(ContextProvider provider);
 
     /**
-     * Sets a listener for enrollment events. See {@link SkylabListener}
+     * Sets a listener for variant change events. See {@link SkylabListener}
      */
     SkylabClient setListener(SkylabListener skylabListener);
 

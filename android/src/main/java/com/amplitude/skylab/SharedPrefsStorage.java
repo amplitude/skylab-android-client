@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple SharedPrefs backed storage for caching enrollment values locally.
+ * Simple SharedPrefs backed storage for caching values locally.
  *
  * This is not multi-process safe.
  */

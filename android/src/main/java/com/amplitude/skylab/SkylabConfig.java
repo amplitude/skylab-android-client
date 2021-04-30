@@ -17,7 +17,6 @@ public class SkylabConfig {
     static final String SHARED_PREFS_SHARED_NAME = "amplitude-flags-shared";
 
     static final String SHARED_PREFS_STORAGE_NAME = "amplitude-flags-saved";
-    static final String ENROLLMENT_ID_KEY = "enrollmentId";
 
     /**
      * Defaults for {@link SkylabConfig}

@@ -1,8 +1,6 @@
 package com.amplitude.skylab;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -47,7 +45,6 @@ public class DefaultSkylabClient implements SkylabClient {
     String instanceName;
     Application application;
     String apiKey;
-    String enrollmentId;
     SkylabConfig config;
     HttpUrl serverUrl;
 
@@ -120,22 +117,9 @@ public class DefaultSkylabClient implements SkylabClient {
         }
     }
 
+    // TODO: remove function
     public String loadFromStorage() {
-        // Use a common SharedPreferences across all instances for the enrollment ID
-        SharedPreferences sharedPreferences =
-                application.getSharedPreferences(SkylabConfig.SHARED_PREFS_SHARED_NAME,
-                        Context.MODE_PRIVATE);
-        enrollmentId = sharedPreferences.getString(SkylabConfig.ENROLLMENT_ID_KEY, null);
-        if (enrollmentId == null) {
-            Log.i(Skylab.TAG, "Creating new id for enrollment");
-            enrollmentId = generateEnrollmentId();
-            sharedPreferences.edit().putString(SkylabConfig.ENROLLMENT_ID_KEY, enrollmentId).apply();
-        }
-        return enrollmentId;
-    }
-
-    private static String generateEnrollmentId() {
-        return uuidToBase36(UUID.randomUUID());
+        return null;
     }
 
     private static String uuidToBase36(UUID uuid) {
