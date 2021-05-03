@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple SharedPrefs backed storage for caching values locally.
+ * Simple SharedPrefs backed storage for caching assigned variant values locally.
  *
  * This is not multi-process safe.
  */
