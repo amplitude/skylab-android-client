@@ -96,7 +96,6 @@ public class DefaultSkylabClient implements SkylabClient {
      */
     @Override
     public Future<SkylabClient> start(SkylabUser skylabUser) {
-        loadFromStorage();
         this.skylabUser = skylabUser;
         return executorService.submit(fetchAllCallable);
     }
@@ -117,10 +116,6 @@ public class DefaultSkylabClient implements SkylabClient {
         }
     }
 
-    // TODO: remove function
-    public String loadFromStorage() {
-        return null;
-    }
 
     private static String uuidToBase36(UUID uuid) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
