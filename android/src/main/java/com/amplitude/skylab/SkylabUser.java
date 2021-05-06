@@ -1,16 +1,10 @@
 package com.amplitude.skylab;
 
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * The Skylab user context object. This is an immutable object that can be created using
@@ -403,9 +397,9 @@ public class SkylabUser {
         }
 
         /**
-         * Performs a shallow clone of an existing SkylabUser into the builder,
+         * Performs a clone of an existing SkylabUser into the builder,
          * ignoring nulls. This will overwrite all user properties with the copied
-         * user user properties if the copied user contains user properties.
+         * user's user properties if the copied user contains user properties.
          * @param user
          * @return
          */
@@ -462,7 +456,12 @@ public class SkylabUser {
                 setLibrary(user.library);
             }
             if (user.userProperties != null) {
-                setUserProperties(user.userProperties);
+                try {
+                    setUserProperties(new JSONObject(user.userProperties.toString()));
+                } catch (JSONException e) {
+                    // shouldn't happen
+                    Log.w(Skylab.TAG, "Could not copy JSON: " + user.userProperties.toString());
+                }
             }
             return this;
         }

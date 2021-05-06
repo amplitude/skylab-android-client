@@ -150,7 +150,8 @@ public class DefaultSkylabClient implements SkylabClient {
      */
     @Override
     public Future<SkylabClient> setUser(SkylabUser skylabUser) {
-        if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && !this.skylabUser.equals(skylabUser))) {
+        if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
+            // Users are equal, no need to refetch
             final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
             future.complete(this);
             return future;
