@@ -3,6 +3,8 @@ package com.amplitude.skylab;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,31 +35,46 @@ public class SkylabUser {
     public static final String LIBRARY = "library";
     public static final String USER_PROPERTIES = "user_properties";
 
-    String userId;
-    String deviceId;
-    String country;
-    String region;
-    String dma;
-    String city;
-    String language;
-    String platform;
-    String version;
-    String os;
-    String deviceFamily;
-    String deviceType;
-    String deviceManufacturer;
-    String deviceBrand;
-    String deviceModel;
-    String carrier;
-    String library;
+    @Nullable String userId;
+    @Nullable String deviceId;
+    @Nullable String country;
+    @Nullable String region;
+    @Nullable String dma;
+    @Nullable String city;
+    @Nullable String language;
+    @Nullable String platform;
+    @Nullable String version;
+    @Nullable String os;
+    @Nullable String deviceFamily;
+    @Nullable String deviceType;
+    @Nullable String deviceManufacturer;
+    @Nullable String deviceBrand;
+    @Nullable String deviceModel;
+    @Nullable String carrier;
+    @Nullable String library;
 
-    JSONObject userProperties;
+    @NotNull JSONObject userProperties;
 
-    private SkylabUser(String userId, String deviceId, String country, String region, String dma,
-                      String city, String language, String platform, String version, String os,
-                      String deviceFamily, String deviceType, String deviceManufacturer,
-                      String deviceBrand, String deviceModel, String carrier, String library,
-                      JSONObject userProperties) {
+    private SkylabUser(
+            @Nullable String userId,
+            @Nullable String deviceId,
+            @Nullable String country,
+            @Nullable String region,
+            @Nullable String dma,
+            @Nullable String city,
+            @Nullable String language,
+            @Nullable String platform,
+            @Nullable String version,
+            @Nullable String os,
+            @Nullable String deviceFamily,
+            @Nullable String deviceType,
+            @Nullable String deviceManufacturer,
+            @Nullable String deviceBrand,
+            @Nullable String deviceModel,
+            @Nullable String carrier,
+            @Nullable String library,
+            @NotNull JSONObject userProperties
+    ) {
         this.userId = userId;
         this.deviceId = deviceId;
         this.country = country;
@@ -78,72 +95,90 @@ public class SkylabUser {
         this.userProperties = userProperties;
     }
 
+    @Nullable
     public String getUserId() {
         return userId;
     }
 
+    @Nullable
     public String getDeviceId() {
         return deviceId;
     }
 
+    @Nullable
     public String getCountry() {
         return country;
     }
 
+    @Nullable
     public String getRegion() {
         return region;
     }
 
+    @Nullable
     public String getDma() {
         return dma;
     }
 
+    @Nullable
     public String getCity() {
         return city;
     }
 
+    @Nullable
     public String getLanguage() {
         return language;
     }
 
+    @Nullable
     public String getPlatform() {
         return platform;
     }
 
+    @Nullable
     public String getVersion() {
         return version;
     }
 
+    @Nullable
     public String getOs() { return os; }
 
+    @Nullable
     public String getDeviceFamily() {
         return deviceFamily;
     }
 
+    @Nullable
     public String getDeviceType() {
         return deviceType;
     }
 
+    @Nullable
     public String getDeviceManufacturer() {
         return deviceManufacturer;
     }
 
+    @Nullable
     public String getDeviceBrand() {
         return deviceBrand;
     }
 
+    @Nullable
     public String getDeviceModel() {
         return deviceModel;
     }
 
+    @Nullable
     public String getCarrier() {
         return carrier;
     }
 
+    @Nullable
     public String getLibrary() {
         return library;
     }
 
+    @NotNull
     public JSONObject getUserProperties() {
         return userProperties;
     }
@@ -186,6 +221,7 @@ public class SkylabUser {
                 that.userProperties == null;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "SkylabUser{" +
@@ -233,6 +269,7 @@ public class SkylabUser {
         return result;
     }
 
+    @NotNull
     public JSONObject toJSONObject() {
         JSONObject object = new JSONObject();
         try {
@@ -260,6 +297,7 @@ public class SkylabUser {
         return object;
     }
 
+    @NotNull
     public static SkylabUser.Builder builder() {
         return new SkylabUser.Builder();
     }
@@ -289,7 +327,8 @@ public class SkylabUser {
          *
          * @param userId The User ID used in Amplitude
          */
-        public Builder setUserId(String userId) {
+        @NotNull
+        public Builder setUserId(@Nullable String userId) {
             this.userId = userId;
             return this;
         }
@@ -299,87 +338,104 @@ public class SkylabUser {
          *
          * @param deviceId The Device ID used in Amplitude
          */
-        public Builder setDeviceId(String deviceId) {
+        @NotNull
+        public Builder setDeviceId(@Nullable String deviceId) {
             this.deviceId = deviceId;
             return this;
         }
 
-        public Builder setCountry(String country) {
+        @NotNull
+        public Builder setCountry(@Nullable String country) {
             this.country = country;
             return this;
         }
 
-        public Builder setRegion(String region) {
+        @NotNull
+        public Builder setRegion(@Nullable String region) {
             this.region = region;
             return this;
         }
 
-        public Builder setCity(String city) {
+        @NotNull
+        public Builder setCity(@Nullable String city) {
             this.city = city;
             return this;
         }
 
-        public Builder setLanguage(String language) {
+        @NotNull
+        public Builder setLanguage(@Nullable String language) {
             this.language = language;
             return this;
         }
 
-        public Builder setPlatform(String platform) {
+        @NotNull
+        public Builder setPlatform(@Nullable String platform) {
             this.platform = platform;
             return this;
         }
 
-        public Builder setVersion(String version) {
+        @NotNull
+        public Builder setVersion(@Nullable String version) {
             this.version = version;
             return this;
         }
 
-        public Builder setDma(String dma) {
+        @NotNull
+        public Builder setDma(@Nullable String dma) {
             this.dma = dma;
             return this;
         }
 
-        public Builder setOs(String os) {
+        @NotNull
+        public Builder setOs(@Nullable String os) {
             this.os = os;
             return this;
         }
 
-        public Builder setDeviceFamily(String deviceFamily) {
+        @NotNull
+        public Builder setDeviceFamily(@Nullable String deviceFamily) {
             this.deviceFamily = deviceFamily;
             return this;
         }
 
-        public Builder setDeviceType(String deviceType) {
+        @NotNull
+        public Builder setDeviceType(@Nullable String deviceType) {
             this.deviceType = deviceType;
             return this;
         }
 
-        public Builder setDeviceManufacturer(String deviceManufacturer) {
+        @NotNull
+        public Builder setDeviceManufacturer(@Nullable String deviceManufacturer) {
             this.deviceManufacturer = deviceManufacturer;
             return this;
         }
 
-        public Builder setDeviceBrand(String deviceBrand) {
+        @NotNull
+        public Builder setDeviceBrand(@Nullable String deviceBrand) {
             this.deviceBrand = deviceBrand;
             return this;
         }
 
-        public Builder setDeviceModel(String deviceModel) {
+        @NotNull
+        public Builder setDeviceModel(@Nullable String deviceModel) {
             this.deviceModel = deviceModel;
             return this;
         }
 
-        public Builder setCarrier(String carrier) {
+        @NotNull
+        public Builder setCarrier(@Nullable String carrier) {
             this.carrier = carrier;
             return this;
         }
 
-        public Builder setLibrary(String library) {
+        @NotNull
+        public Builder setLibrary(@Nullable String library) {
             this.library = library;
             return this;
         }
 
-        public Builder setUserProperties(JSONObject userProperties) {
+        @NotNull
+        public Builder setUserProperties(@Nullable JSONObject userProperties) {
             this.userProperties = userProperties;
             return this;
         }
@@ -387,7 +443,8 @@ public class SkylabUser {
         /**
          * Sets a custom user property for use in rule-based targeting
          */
-        public Builder setUserProperty(String property, Object value) {
+        @NotNull
+        public Builder setUserProperty(@NotNull String property, @NotNull Object value) {
             try {
                 this.userProperties.put(property, value);
             } catch (JSONException e) {
@@ -403,7 +460,11 @@ public class SkylabUser {
          * @param user
          * @return
          */
-        public Builder copyUser(SkylabUser user) {
+        @NotNull
+        public Builder copyUser(@Nullable SkylabUser user) {
+            if (user == null) {
+                return this;
+            }
             if (user.userId != null) {
                 setUserId(user.userId);
             }
@@ -416,7 +477,10 @@ public class SkylabUser {
             if (user.region != null) {
                 setRegion(user.region);
             }
-            if (user.region != null) {
+            if (user.dma != null) {
+                setDma(user.dma);
+            }
+            if (user.city != null) {
                 setCity(user.city);
             }
             if (user.language != null) {
@@ -430,9 +494,6 @@ public class SkylabUser {
             }
             if (user.os != null) {
                 setOs(user.os);
-            }
-            if (user.dma != null) {
-                setDma(user.dma);
             }
             if (user.deviceFamily != null) {
                 setDeviceFamily(user.deviceFamily);
@@ -466,8 +527,11 @@ public class SkylabUser {
             return this;
         }
 
+        @NotNull
         public SkylabUser build() {
-            return new SkylabUser(userId, deviceId, country, region, dma, city, language, platform, version, os, deviceFamily, deviceType, deviceManufacturer, deviceBrand, deviceModel, carrier, library, userProperties);
+            return new SkylabUser(userId, deviceId, country, region, dma, city, language, platform,
+                    version, os, deviceFamily, deviceType, deviceManufacturer, deviceBrand,
+                    deviceModel, carrier, library, userProperties);
         }
     }
 

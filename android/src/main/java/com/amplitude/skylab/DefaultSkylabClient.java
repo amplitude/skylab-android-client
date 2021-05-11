@@ -1,21 +1,19 @@
 package com.amplitude.skylab;
 
-import android.app.Application;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -32,49 +30,51 @@ import okhttp3.Response;
 
 /**
  * Default {@link SkylabClient} implementation. Use the {@link Skylab} class to initialize and
- * access
- * instances.
+ * access instances.
  */
 public class DefaultSkylabClient implements SkylabClient {
+
     public static final String LIBRARY = "skylab-android/" + BuildConfig.VERSION_NAME;
 
     private static final int BASE_64_DEFAULT_FLAGS =
             Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE;
     static final Object STORAGE_LOCK = new Object();
 
-    String instanceName;
-    Application application;
-    String apiKey;
-    SkylabConfig config;
-    HttpUrl serverUrl;
+    @NotNull final String instanceName;
+    @NotNull final String apiKey;
+    @NotNull final SkylabConfig config;
+    @NotNull final HttpUrl serverUrl;
 
-    SkylabUser skylabUser;
-    SkylabListener skylabListener;
-    ContextProvider contextProvider;
+    @Nullable SkylabUser skylabUser;
+    @Nullable SkylabListener skylabListener;
+    @Nullable ContextProvider contextProvider;
 
-    Storage storage;
-    OkHttpClient httpClient;
-    ScheduledThreadPoolExecutor executorService;
-    ScheduledFuture<?> pollFuture;
+    @NotNull final Storage storage;
+    @NotNull final OkHttpClient httpClient;
+    @NotNull final ScheduledThreadPoolExecutor executorService;
+    @Nullable ScheduledFuture<?> pollFuture;
 
-    Runnable pollTask = new Runnable() {
+    @NotNull Runnable pollTask = new Runnable() {
         @Override
         public void run() {
             fetchAll();
         }
     };
 
-    Callable<SkylabClient> fetchAllCallable = new Callable<SkylabClient>() {
+    @NotNull Callable<SkylabClient> fetchAllCallable = new Callable<SkylabClient>() {
         @Override
         public SkylabClient call() throws Exception {
             return fetchAll().get();
         }
     };
 
-    DefaultSkylabClient(Application application, String apiKey,
-                        SkylabConfig config, Storage storage,
-                        OkHttpClient httpClient,
-                        ScheduledThreadPoolExecutor executorService) {
+    DefaultSkylabClient(
+            @NotNull String apiKey,
+            @NotNull SkylabConfig config,
+            @NotNull Storage storage,
+            @NotNull OkHttpClient httpClient,
+            @NotNull ScheduledThreadPoolExecutor executorService
+    ) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             // guarantee that apiKey exists
             throw new IllegalArgumentException("SkylabClient initialized with null or empty " +
@@ -87,7 +87,6 @@ public class DefaultSkylabClient implements SkylabClient {
         this.storage = storage;
         this.config = config;
         this.pollFuture = null;
-        this.application = application;
         serverUrl = HttpUrl.parse(config.getServerUrl());
     }
 
@@ -95,7 +94,8 @@ public class DefaultSkylabClient implements SkylabClient {
      * See {@link SkylabClient#start(SkylabUser)}
      */
     @Override
-    public Future<SkylabClient> start(SkylabUser skylabUser) {
+    @NotNull
+    public Future<SkylabClient> start(@Nullable SkylabUser skylabUser) {
         this.skylabUser = skylabUser;
         return executorService.submit(fetchAllCallable);
     }
@@ -104,7 +104,7 @@ public class DefaultSkylabClient implements SkylabClient {
      * See {@link SkylabClient#start(SkylabUser, long)}
      */
     @Override
-    public void start(SkylabUser skylabUser, long timeoutMs) {
+    public void start(@Nullable SkylabUser skylabUser, long timeoutMs) {
         try {
             Future<SkylabClient> future = start(skylabUser);
             future.get(timeoutMs, TimeUnit.MILLISECONDS);
@@ -116,19 +116,11 @@ public class DefaultSkylabClient implements SkylabClient {
         }
     }
 
-
-    private static String uuidToBase36(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return new BigInteger(1, bb.array()).toString(36);
-    }
-
     /**
      * See {@link SkylabClient#setUser}
      */
     @Override
-    public Future<SkylabClient> setUser(SkylabUser skylabUser) {
+    public Future<SkylabClient> setUser(@Nullable SkylabUser skylabUser) {
         if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
             // Users are equal, no need to refetch
             final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
@@ -146,6 +138,7 @@ public class DefaultSkylabClient implements SkylabClient {
      * @return
      */
     @Override
+    @Nullable
     public SkylabUser getUser() {
         return this.skylabUser;
     }
@@ -155,6 +148,7 @@ public class DefaultSkylabClient implements SkylabClient {
      * @return
      */
     @Override
+    @NotNull
     public SkylabUser getUserWithContext() {
         SkylabUser.Builder builder = SkylabUser.builder();
         if (contextProvider != null) {
@@ -180,6 +174,7 @@ public class DefaultSkylabClient implements SkylabClient {
         return builder.build();
     }
 
+    @NotNull
     @Override
     public SkylabClient startPolling() {
         if (pollFuture == null) {
@@ -191,6 +186,7 @@ public class DefaultSkylabClient implements SkylabClient {
         return this;
     }
 
+    @NotNull
     @Override
     public SkylabClient stopPolling() {
         if (pollFuture != null) {
@@ -202,6 +198,7 @@ public class DefaultSkylabClient implements SkylabClient {
         return this;
     }
 
+    @NotNull
     public Future<SkylabClient> refetchAll() {
         return executorService.submit(fetchAllCallable);
     }
@@ -212,6 +209,7 @@ public class DefaultSkylabClient implements SkylabClient {
      *
      * @return
      */
+    @NotNull
     Future<SkylabClient> fetchAll() {
         final AsyncFuture<SkylabClient> future = new AsyncFuture<>();
         final long start = System.nanoTime();
@@ -227,19 +225,21 @@ public class DefaultSkylabClient implements SkylabClient {
                 serverUrl.newBuilder().addPathSegments("sdk/vardata/" + base64Encoded).build();
         Log.d(Skylab.TAG,
                 "Requesting variants from " + url.toString() + " for user " + jsonContext.toString());
-        Request request = new Request.Builder().url(url).addHeader("Authorization",
-                "Api-Key " + this.apiKey)
-                .get().build();
+        Request request = new Request.Builder()
+                .get()
+                .url(url)
+                .addHeader("Authorization", "Api-Key " + this.apiKey)
+                .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e(Skylab.TAG, e.getMessage(), e);
                 future.completeExceptionally(e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String responseString = response.body().string();
                 try {
                     if (response.isSuccessful()) {
@@ -250,7 +250,6 @@ public class DefaultSkylabClient implements SkylabClient {
                             Iterator<String> flags = result.keys();
                             while (flags.hasNext()) {
                                 String flag = flags.next();
-
                                 JSONObject variantJsonObj = result.getJSONObject(flag);
                                 Variant newValue = Variant.fromJsonObject(variantJsonObj);
                                 storage.put(flag, newValue);
@@ -287,7 +286,8 @@ public class DefaultSkylabClient implements SkylabClient {
      * @return
      */
     @Override
-    public Variant getVariant(String flagKey) {
+    @NotNull
+    public Variant getVariant(@NotNull String flagKey) {
         return getVariant(flagKey, config.getFallbackVariant());
     }
 
@@ -299,12 +299,13 @@ public class DefaultSkylabClient implements SkylabClient {
      * @return
      */
     @Override
-    public Variant getVariant(String flagKey, Variant fallback) {
+    @NotNull
+    public Variant getVariant(@NotNull String flagKey, @NotNull Variant fallback) {
         Variant variant;
         synchronized (STORAGE_LOCK) {
             variant = storage.get(flagKey);
         }
-        if (variant == null || variant.value() == null) {
+        if (variant == null || variant.value == null) {
             variant = fallback;
             Log.d(Skylab.TAG, String.format("Variant for %s not found, returning fallback variant" +
                     " %s", flagKey, variant));
@@ -316,6 +317,7 @@ public class DefaultSkylabClient implements SkylabClient {
      * Fetches all variants from local storage.
      * @return
      */
+    @NotNull
     public Map<String, Variant> getVariants() {
         synchronized (STORAGE_LOCK) {
             return storage.getAll();
@@ -323,18 +325,20 @@ public class DefaultSkylabClient implements SkylabClient {
     }
 
     @Override
-    public SkylabClient setContextProvider(ContextProvider provider) {
+    @NotNull
+    public SkylabClient setContextProvider(@Nullable ContextProvider provider) {
         this.contextProvider = provider;
         return this;
     }
 
     @Override
-    public SkylabClient setListener(SkylabListener skylabListener) {
+    @NotNull
+    public SkylabClient setListener(@Nullable SkylabListener skylabListener) {
         this.skylabListener = skylabListener;
         return this;
     }
 
-    private void fireOnVariantsReceived(SkylabUser skylabUser, Map<String, Variant> variants) {
+    private void fireOnVariantsReceived(@Nullable SkylabUser skylabUser, @NotNull Map<String, Variant> variants) {
         if (this.skylabListener != null) {
             this.skylabListener.onVariantsChanged(skylabUser, variants);
         }

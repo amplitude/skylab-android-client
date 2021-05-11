@@ -2,31 +2,39 @@ package com.amplitude.skylab;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Variant {
-    public final String value;
-    public final Object payload;
 
-    public Variant(String value) {
+    @Nullable public final String value;
+    @Nullable public final Object payload;
+
+    public Variant(@Nullable String value) {
         this(value, null);
     }
 
-    public Variant(String value, Object payload) {
+    public Variant(@Nullable String value, @Nullable Object payload) {
         this.value = value;
         this.payload = payload;
     }
 
+    @Nullable
+    @Deprecated
     public String value() {
         return this.value;
     }
 
+    @Nullable
+    @Deprecated
     public Object payload() {
         return this.payload;
     }
 
     @Override
+    @NotNull
     public String toString() {
         return "Variant{" +
                 "value='" + value + '\'' +
@@ -34,7 +42,8 @@ public class Variant {
                 '}';
     }
 
-    public static Variant fromJsonObject(JSONObject variantJsonObj) throws JSONException {
+    @NotNull
+    public static Variant fromJsonObject(@NotNull JSONObject variantJsonObj) throws JSONException {
         String value;
 
         if (variantJsonObj.has("value")) {
@@ -52,6 +61,7 @@ public class Variant {
         return new Variant(value, payload);
     }
 
+    @NotNull
     public String toJson() {
         // create a JSONObject and then serialize it
         JSONObject jsonObj = new JSONObject();
@@ -69,7 +79,8 @@ public class Variant {
         return jsonObj.toString();
     }
 
-    public static Variant fromJson(String json) {
+    @NotNull
+    public static Variant fromJson(@Nullable String json) {
         // deserialize into a JSONObject and then create a Variant
         if (json == null) {
             return new Variant(null, null);
@@ -108,11 +119,9 @@ public class Variant {
             return false;
         Variant other = (Variant) obj;
         if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
+            return other.value == null;
+        } else {
+            return value.equals(other.value);
+        }
     }
-
 }

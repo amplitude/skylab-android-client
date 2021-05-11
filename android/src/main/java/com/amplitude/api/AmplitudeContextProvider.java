@@ -10,19 +10,22 @@ import android.util.Log;
 import com.amplitude.skylab.ContextProvider;
 import com.amplitude.skylab.Skylab;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Locale;
 
 public class AmplitudeContextProvider implements ContextProvider {
 
-    private AmplitudeClient amplitudeClient;
+    @NotNull private final AmplitudeClient amplitudeClient;
     private boolean initialized;
-    private String version;
-    private String carrier;
+    @Nullable private String version;
+    @Nullable private String carrier;
 
     public static final String PLATFORM = Constants.PLATFORM;
     public static final String OS_NAME = DeviceInfo.OS_NAME;
 
-    public AmplitudeContextProvider(AmplitudeClient amplitudeClient) {
+    public AmplitudeContextProvider(@NotNull AmplitudeClient amplitudeClient) {
         this.amplitudeClient = amplitudeClient;
     }
 
@@ -49,18 +52,21 @@ public class AmplitudeContextProvider implements ContextProvider {
 
 
     @Override
+    @Nullable
     public String getUserId() {
         waitForAmplitudeInitialized();
         return amplitudeClient.getUserId();
     }
 
     @Override
+    @Nullable
     public String getDeviceId() {
         waitForAmplitudeInitialized();
         return amplitudeClient.getDeviceId();
     }
 
     @Override
+    @Nullable
     public String getPlatform() {
         return PLATFORM;
     }
@@ -71,11 +77,8 @@ public class AmplitudeContextProvider implements ContextProvider {
             try {
                 packageInfo = amplitudeClient.context.getPackageManager().getPackageInfo(amplitudeClient.context.getPackageName(), 0);
                 version = packageInfo.versionName;
-            } catch (PackageManager.NameNotFoundException e) {
-
-            } catch (Exception e) {
-
-            }
+            } catch (PackageManager.NameNotFoundException ignored) {
+            } catch (Exception ignored) {}
         }
     }
 
@@ -92,36 +95,43 @@ public class AmplitudeContextProvider implements ContextProvider {
     }
 
     @Override
+    @Nullable
     public String getVersion() {
         return version;
     }
 
     @Override
+    @Nullable
     public String getLanguage() {
         return Locale.getDefault().getLanguage();
     }
 
     @Override
+    @Nullable
     public String getOs() {
         return OS_NAME + " " + Build.VERSION.RELEASE;
     }
 
     @Override
+    @Nullable
     public String getBrand() {
         return Build.BRAND;
     }
 
     @Override
+    @Nullable
     public String getManufacturer() {
         return Build.MANUFACTURER;
     }
 
     @Override
+    @Nullable
     public String getModel() {
         return Build.MODEL;
     }
 
     @Override
+    @Nullable
     public String getCarrier() {
         return carrier;
     }

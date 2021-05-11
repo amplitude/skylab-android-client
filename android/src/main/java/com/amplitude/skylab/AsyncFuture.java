@@ -1,15 +1,19 @@
 package com.amplitude.skylab;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class AsyncFuture<T> implements Future<T> {
-    private volatile T value = null;
+class AsyncFuture<T> implements Future<T> {
+
+    @Nullable private volatile T value = null;
     private volatile boolean completed = false;
-    private volatile Throwable throwable = null;
-    private final Object lock = new Object();
+    @Nullable private volatile Throwable throwable = null;
+    @NotNull private final Object lock = new Object();
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -27,6 +31,7 @@ public class AsyncFuture<T> implements Future<T> {
     }
 
     @Override
+    @NotNull
     public T get() throws InterruptedException, ExecutionException {
         synchronized (lock) {
             while (!completed) {
@@ -40,7 +45,8 @@ public class AsyncFuture<T> implements Future<T> {
     }
 
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
+    @NotNull
+    public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException,
             TimeoutException {
         long nanosRemaining = unit.toNanos(timeout);
         long end = System.nanoTime() + nanosRemaining;
@@ -61,7 +67,7 @@ public class AsyncFuture<T> implements Future<T> {
         return value;
     }
 
-    synchronized void complete(T value) {
+    synchronized void complete(@NotNull T value) {
         if (!completed) {
             this.value = value;
             synchronized (lock) {
@@ -71,7 +77,7 @@ public class AsyncFuture<T> implements Future<T> {
         }
     }
 
-    synchronized void completeExceptionally(Throwable ex) {
+    synchronized void completeExceptionally(@NotNull Throwable ex) {
         if (!completed) {
             throwable = ex;
             synchronized (lock) {

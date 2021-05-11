@@ -2,6 +2,9 @@ package com.amplitude.skylab;
 
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Configuration options. This is an immutable object that can be created using
  *  * a {@link SkylabConfig.Builder}. Example usage:
@@ -44,16 +47,16 @@ public class SkylabConfig {
         public static final String SERVER_URL = "https://api.lab.amplitude.com/";
     }
 
-    private Variant fallbackVariant;
-    private String instanceName;
-    private int pollIntervalSecs;
-    private String serverUrl;
+    @Nullable private final Variant fallbackVariant;
+    @NotNull private final String instanceName;
+    private final int pollIntervalSecs;
+    @NotNull private final String serverUrl;
 
     private SkylabConfig(
-            Variant fallbackVariant,
-            String instanceName,
+            @Nullable Variant fallbackVariant,
+            @NotNull String instanceName,
             int pollIntervalSecs,
-            String serverUrl
+            @NotNull String serverUrl
     ) {
         this.fallbackVariant = fallbackVariant;
         this.instanceName = instanceName;
@@ -61,14 +64,17 @@ public class SkylabConfig {
         this.serverUrl = serverUrl;
     }
 
+    @Nullable
     public Variant getFallbackVariant() {
         return fallbackVariant;
     }
 
+    @NotNull
     public String getInstanceName() {
         return instanceName;
     }
 
+    @NotNull
     public String getServerUrl() {
         return serverUrl;
     }
@@ -77,6 +83,7 @@ public class SkylabConfig {
         return pollIntervalSecs;
     }
 
+    @NotNull
     public static Builder builder() {
         return new Builder();
     }
@@ -97,7 +104,8 @@ public class SkylabConfig {
          * @param fallbackVariant
          * @return
          */
-        public Builder setFallbackVariant(Variant fallbackVariant) {
+        @NotNull
+        public Builder setFallbackVariant(@Nullable Variant fallbackVariant) {
             this.fallbackVariant = fallbackVariant;
             return this;
         }
@@ -108,7 +116,8 @@ public class SkylabConfig {
          * @param instanceName
          * @return
          */
-        public Builder setInstanceName(String instanceName) {
+        @NotNull
+        public Builder setInstanceName(@NotNull String instanceName) {
             this.instanceName = normalizeInstanceName(instanceName);
             return this;
         }
@@ -119,6 +128,7 @@ public class SkylabConfig {
          * @param pollIntervalSecs
          * @return
          */
+        @NotNull
         public Builder setPollIntervalSecs(int pollIntervalSecs) {
             this.pollIntervalSecs = pollIntervalSecs;
             return this;
@@ -130,13 +140,15 @@ public class SkylabConfig {
          * @param serverUrl
          * @return
          */
-        public Builder setServerUrl(String serverUrl) {
+        @NotNull
+        public Builder setServerUrl(@NotNull String serverUrl) {
             this.serverUrl = serverUrl;
             return this;
         }
     }
 
-    static String normalizeInstanceName(String instance) {
+    @NotNull
+    static String normalizeInstanceName(@Nullable String instance) {
         if (TextUtils.isEmpty(instance)) {
             instance = SkylabConfig.Defaults.INSTANCE_NAME;
         }
