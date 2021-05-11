@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface Storage {
+interface Storage {
 
     @NotNull
     Variant put(@NotNull String key, @NotNull Variant variant);
