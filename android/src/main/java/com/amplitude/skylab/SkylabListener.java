@@ -12,7 +12,5 @@ import java.util.Map;
  * values.
  */
 public interface SkylabListener {
-
     void onVariantsChanged(@Nullable SkylabUser skylabUser, @NotNull Map<String, Variant> variants);
-
 }

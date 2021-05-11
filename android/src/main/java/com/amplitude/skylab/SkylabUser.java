@@ -1,6 +1,5 @@
 package com.amplitude.skylab;
 
-
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;

@@ -344,5 +344,4 @@ public class DefaultSkylabClient implements SkylabClient {
             this.skylabListener.onVariantsChanged(skylabUser, variants);
         }
     }
-
 }

@@ -40,5 +40,4 @@ public interface ContextProvider {
 
     @Nullable
     String getCarrier();
-
 }

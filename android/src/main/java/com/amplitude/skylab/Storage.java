@@ -16,5 +16,4 @@ interface Storage {
     Map<String, Variant> getAll();
 
     void clear();
-
 }
