@@ -42,14 +42,10 @@ public class Skylab {
 
     /**
      * Returns the default {@link SkylabClient} instance.
-     * @throws NullPointerException If the default client has not been initialized.
      */
-    @NotNull
+    @Nullable
     public static SkylabClient getInstance() {
-        SkylabClient c = getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
-        if (c == null)
-            throw new NullPointerException("The default SkylabClient must be initialized before accessing the default instance");
-        return c;
+        return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
     }
 
     /**
@@ -60,6 +56,30 @@ public class Skylab {
     public static SkylabClient getInstance(@Nullable String name) {
         String normalizedName = SkylabConfig.normalizeInstanceName(name);
         return INSTANCES.get(normalizedName);
+    }
+
+    /**
+     * Returns the default {@link SkylabClient} instance associated with the provided name.
+     * @throws IllegalStateException If the default client has not been initialized.
+     */
+    @NotNull
+    public static SkylabClient getInstanceOrThrow() {
+        SkylabClient c = getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+        if (c == null)
+            throw new IllegalStateException("The default SkylabClient must be initialized before accessing the default instance");
+        return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+    }
+
+    /**
+     * Returns the {@link SkylabClient} instance.
+     * @throws IllegalStateException If the default client has not been initialized.
+     */
+    @NotNull
+    public static SkylabClient getInstanceOrThrow(@Nullable String name) {
+        SkylabClient c = getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+        if (c == null)
+            throw new IllegalStateException("The \""+name+"\" SkylabClient must be initialized before accessing the default instance");
+        return getInstance(name);
     }
 
     /**

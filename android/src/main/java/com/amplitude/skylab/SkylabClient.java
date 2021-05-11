@@ -94,11 +94,13 @@ public interface SkylabClient {
      * when fetching flags. The enrichment happens at the time a new network request is made.
      * This is used to connect Skylab to Amplitude identities. See {@link ContextProvider}.
      */
-    SkylabClient setContextProvider(ContextProvider provider);
+    @NotNull
+    SkylabClient setContextProvider(@Nullable ContextProvider provider);
 
     /**
      * Sets a listener for assigned variant change events. See {@link SkylabListener}
      */
-    SkylabClient setListener(SkylabListener skylabListener);
+    @NotNull
+    SkylabClient setListener(@Nullable SkylabListener skylabListener);
 
 }
