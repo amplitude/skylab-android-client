@@ -120,6 +120,7 @@ public class DefaultSkylabClient implements SkylabClient {
      * See {@link SkylabClient#setUser}
      */
     @Override
+    @NotNull
     public Future<SkylabClient> setUser(@Nullable SkylabUser skylabUser) {
         if ((this.skylabUser == null && skylabUser == null) || (this.skylabUser != null && this.skylabUser.equals(skylabUser))) {
             // Users are equal, no need to refetch
