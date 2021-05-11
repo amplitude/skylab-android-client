@@ -102,5 +102,4 @@ public interface SkylabClient {
      */
     @NotNull
     SkylabClient setListener(@Nullable SkylabListener skylabListener);
-
 }

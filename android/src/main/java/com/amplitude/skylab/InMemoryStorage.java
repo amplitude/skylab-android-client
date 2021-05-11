@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemoryStorage implements Storage {
+class InMemoryStorage implements Storage {
 
     private final Map<String, Variant> data = new ConcurrentHashMap<>();
 

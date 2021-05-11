@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * This is not multi-process safe.
  */
-public class SharedPrefsStorage implements Storage {
+class SharedPrefsStorage implements Storage {
 
     @NotNull final Context appContext;
     @NotNull final String sharedPrefsKey;
