@@ -1,5 +1,8 @@
 package com.amplitude.skylab;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 /**
@@ -9,7 +12,5 @@ import java.util.Map;
  * values.
  */
 public interface SkylabListener {
-
-    public void onVariantsChanged(SkylabUser skylabUser, Map<String, Variant> variants);
-
+    void onVariantsChanged(@Nullable SkylabUser skylabUser, @NotNull Map<String, Variant> variants);
 }

@@ -12,6 +12,8 @@ import com.amplitude.skylab.SkylabListener;
 import com.amplitude.skylab.SkylabUser;
 import com.amplitude.skylab.Variant;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public class ExampleApplication extends Application {
@@ -28,7 +30,7 @@ public class ExampleApplication extends Application {
         amplitude.setUserId("test-user");
         client.setListener(new SkylabListener() {
             @Override
-            public void onVariantsChanged(SkylabUser skylabUser, Map<String, Variant> variants) {
+            public void onVariantsChanged(SkylabUser skylabUser, @NotNull Map<String, Variant> variants) {
                 // handle variants changed
             }
         });

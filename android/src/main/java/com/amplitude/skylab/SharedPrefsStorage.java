@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,13 +15,13 @@ import java.util.Map;
  *
  * This is not multi-process safe.
  */
-public class SharedPrefsStorage implements Storage {
+class SharedPrefsStorage implements Storage {
 
-    Context appContext;
-    String sharedPrefsKey;
-    SharedPreferences sharedPrefs;
+    @NotNull final Context appContext;
+    @NotNull final String sharedPrefsKey;
+    @NotNull final SharedPreferences sharedPrefs;
 
-    public SharedPrefsStorage(Context appContext, String instanceName) {
+    public SharedPrefsStorage(@NotNull Context appContext, @Nullable String instanceName) {
         this.appContext = appContext;
         if (TextUtils.isEmpty(instanceName)) {
             this.sharedPrefsKey = SkylabConfig.SHARED_PREFS_STORAGE_NAME;
@@ -29,17 +32,20 @@ public class SharedPrefsStorage implements Storage {
     }
 
     @Override
-    public Variant put(String key, Variant value) {
+    @NotNull
+    public Variant put(@NotNull String key, @NotNull Variant value) {
         String oldValue = sharedPrefs.getString(key, null);
         sharedPrefs.edit().putString(key, value.toJson()).apply();
         return Variant.fromJson(oldValue);
     }
 
     @Override
-    public Variant get(String key) {
+    @NotNull
+    public Variant get(@NotNull String key) {
         return Variant.fromJson(sharedPrefs.getString(key, null));
     }
 
+    @NotNull
     @Override
     public Map<String, Variant> getAll() {
         Map<String, Variant> all = new HashMap<>();

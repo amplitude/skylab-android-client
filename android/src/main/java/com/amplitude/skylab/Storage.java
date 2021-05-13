@@ -1,15 +1,19 @@
 package com.amplitude.skylab;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
-public interface Storage {
+interface Storage {
 
-    Variant put(String key, Variant variant);
+    @NotNull
+    Variant put(@NotNull String key, @NotNull Variant variant);
 
-    Variant get(String key);
+    @NotNull
+    Variant get(@NotNull String key);
 
+    @NotNull
     Map<String, Variant> getAll();
 
     void clear();
-
 }

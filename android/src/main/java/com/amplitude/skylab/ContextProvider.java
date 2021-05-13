@@ -1,5 +1,7 @@
 package com.amplitude.skylab;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  *  Classes can implement this interface to provide a User ID and Device ID to the
  *  {@link SkylabUser} context object. This allows for connecting with Amplitude's
@@ -9,24 +11,33 @@ package com.amplitude.skylab;
  */
 public interface ContextProvider {
 
-    public String getUserId();
+    @Nullable
+    String getUserId();
 
-    public String getDeviceId();
+    @Nullable
+    String getDeviceId();
 
-    public String getPlatform();
+    @Nullable
+    String getPlatform();
 
-    public String getVersion();
+    @Nullable
+    String getVersion();
 
-    public String getLanguage();
+    @Nullable
+    String getLanguage();
 
-    public String getOs();
+    @Nullable
+    String getOs();
 
-    public String getBrand();
+    @Nullable
+    String getBrand();
 
-    public String getManufacturer();
+    @Nullable
+    String getManufacturer();
 
-    public String getModel();
+    @Nullable
+    String getModel();
 
-    public String getCarrier();
-
+    @Nullable
+    String getCarrier();
 }

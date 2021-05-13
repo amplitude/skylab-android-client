@@ -2,6 +2,9 @@ package com.amplitude.skylab;
 
 import android.app.Application;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -38,8 +41,9 @@ public class Skylab {
     // Public API
 
     /**
-     * Returns the default {@link SkylabClient} instance
+     * Returns the default {@link SkylabClient} instance.
      */
+    @Nullable
     public static SkylabClient getInstance() {
         return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
     }
@@ -48,9 +52,34 @@ public class Skylab {
      * Returns the {@link SkylabClient} instance associated with the provided name. If no Client
      * was initialized with the given name, returns null.
      */
-    public static SkylabClient getInstance(String name) {
+    @Nullable
+    public static SkylabClient getInstance(@Nullable String name) {
         String normalizedName = SkylabConfig.normalizeInstanceName(name);
         return INSTANCES.get(normalizedName);
+    }
+
+    /**
+     * Returns the default {@link SkylabClient} instance associated with the provided name.
+     * @throws IllegalStateException If the default client has not been initialized.
+     */
+    @NotNull
+    public static SkylabClient getInstanceOrThrow() {
+        SkylabClient c = getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+        if (c == null)
+            throw new IllegalStateException("The default SkylabClient must be initialized before accessing the default instance");
+        return getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+    }
+
+    /**
+     * Returns the {@link SkylabClient} instance.
+     * @throws IllegalStateException If the default client has not been initialized.
+     */
+    @NotNull
+    public static SkylabClient getInstanceOrThrow(@Nullable String name) {
+        SkylabClient c = getInstance(SkylabConfig.Defaults.INSTANCE_NAME);
+        if (c == null)
+            throw new IllegalStateException("The \""+name+"\" SkylabClient must be initialized before accessing the default instance");
+        return getInstance(name);
     }
 
     /**
@@ -62,12 +91,16 @@ public class Skylab {
      * @param apiKey  The API key. This can be found in the Skylab settings and should not be null or empty.
      * @param config see {@link SkylabConfig} for configuration options
      */
-    public static synchronized SkylabClient init(Application application,
-                                                 String apiKey, SkylabConfig config) {
+    @NotNull
+    public static synchronized SkylabClient init(
+            @NotNull Application application,
+            @NotNull String apiKey,
+            @NotNull SkylabConfig config
+    ) {
         String instanceName = config.getInstanceName();
         DefaultSkylabClient client = INSTANCES.get(instanceName);
         if (client == null) {
-            client = new DefaultSkylabClient(application, apiKey, config,
+            client = new DefaultSkylabClient(apiKey, config,
                     new SharedPrefsStorage(application, instanceName), HTTP_CLIENT, EXECUTOR_SERVICE);
             INSTANCES.put(instanceName, client);
         }

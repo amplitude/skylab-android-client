@@ -47,7 +47,7 @@ public class VariantTest {
         {
             Variant variant = new Variant(null);
             Assert.assertEquals("{}", variant.toJson());
-            Assert.assertNull(Variant.fromJson(variant.toJson()).value());
+            Assert.assertNull(Variant.fromJson(variant.toJson()).value);
         }
     }
 
